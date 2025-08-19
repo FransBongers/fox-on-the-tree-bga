@@ -1,0 +1,67 @@
+@use './info-panel/infoPanel';
+@use 'nouislider';
+@use './settings//settingsModal';
+@use './ui-components/ui-components';
+
+/* make space between buttons on touch devices */
+@media (hover: none) {
+  #page-title .action-button.bgabutton,
+  #page-title .bgabutton {
+    margin-bottom: 8px;
+    margin-top: 8px;
+  }
+}
+
+/* Hide the "You may note something for next time..." popup that would appear. */
+#turnBasedNotesIncent {
+  display: none;
+}
+
+/** Hide player is now online, player is now offline messages 
+* Note: requires setup of adding notif name as class
+* TODO: add name of function
+*/
+.notif_playerstatus {
+  display: none !important;
+}
+
+/* Prevent the game from scrolling while the game log or chat is visible on mobile. */
+body.chatbar_ontop {
+  overflow: hidden;
+}
+
+/* Add text shadows to player colors that require it */
+// a[style*='color: #8393ca'],
+// a[style*='color:#8393ca'],
+// span[style*='color: #8393ca'],
+// span[style*='color:#8393ca'],
+a[style*='color: #e3bcb4'],
+a[style*='color:#e3bcb4'],
+span[style*='color: #e3bcb4'],
+span[style*='color:#e3bcb4'],
+// a[style*='color: #7f5574'],
+// a[style*='color:#7f5574'],
+// span[style*='color: #7f5574'],
+// span[style*='color:#7f5574'],
+a[style*='color: #a2a882'],
+a[style*='color:#a2a882'],
+span[style*='color: #a2a882'],
+span[style*='color:#a2a882'],
+a[style*='color: #fcd873'],
+a[style*='color:#fcd873'],
+span[style*='color: #fcd873'],
+span[style*='color:#fcd873'] {
+  text-shadow: 1px 0 0 black, 0 1px 0 black, -1px 0 0 black, 0 -1px 0 black,
+    1px 1px 0 black, -1px 1px 0 black, 1px -1px 0 black, -1px -1px 0 black !important;
+}
+
+#page-title {
+  min-height: 52px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#pagemaintitle_wrap {
+  flex-grow: 1;
+}

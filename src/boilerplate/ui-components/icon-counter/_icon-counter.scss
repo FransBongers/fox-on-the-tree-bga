@@ -1,0 +1,37 @@
+@use 'sass:math';
+
+.icon-counter-container {
+  // width: 50px;
+  // height: 50px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  // justify-content: center;
+  position: relative;
+  gap: 4px;
+
+  .icon-counter-counter {
+    cursor: default;
+    font-weight: bold;
+    font-size: calc(var(--iconScale) * 20px);
+  }
+
+  .icon-counter-icon {
+  }
+}
+
+.icon-counter-container[data-has-value='false'] {
+  opacity: 0.3;
+}
+
+.icon-counter-container[data-type='overlap'] {
+  .icon-counter-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .icon-counter-counter {
+    text-shadow: #fff 0 0 2px, #fff 0 0 2px, #fff 0 0 2px, #fff 0 0 2px, #fff 0 0 2px, #fff 0 0 2px;
+  }
+}

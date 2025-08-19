@@ -1,0 +1,25 @@
+{
+  "name": "foxonthetree",
+  "version": "1.0.0",
+  "description": "Fox on the Tree for BGA",
+  "main": "foxonthetree.js",
+  "scripts": {
+    "build:ts": "tsc",
+    "build:scss": "sass --no-source-map src/foxonthetree.scss foxonthetree.css",
+    "watch:ts": "tsc --watch",
+    "watch:scss": "sass --watch src/foxonthetree.scss foxonthetree.css",
+    "watch": "npm run watch:ts && npm run watch:scss",
+    "build": "npm run build:ts && npm run build:scss"
+  },
+  "author": "Frans Bongers",
+  "license": "MIT",
+  "dependencies": {
+    "bga-animations": "thoun/bga-animations#1.1.1",
+    "bga-cards": "thoun/bga-cards#3.1.1",
+    "bga-dice": "thoun/bga-dice#0.0.1"
+  },
+  "devDependencies": {
+    "sass": "^1.77.2",
+    "typescript": "^5.7.3"
+  }
+}

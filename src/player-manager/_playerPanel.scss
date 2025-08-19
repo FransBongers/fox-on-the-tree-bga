@@ -1,0 +1,19 @@
+.player-board-game-specific-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: auto;
+  // flex-direction: column;
+  grid-gap: 8px;
+  grid-row-gap: 8px;
+  --iconScale: 1;
+  // padding: 2px;
+  padding-top: 8px;
+}
+
+.fott-counters-row {
+  width: 100%;
+  display: grid;
+  grid-template: 48px auto / repeat(4, 48px);
+  justify-content: space-evenly;
+  gap: 4px;
+}

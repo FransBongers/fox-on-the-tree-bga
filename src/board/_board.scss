@@ -1,0 +1,10 @@
+@use '../base';
+
+#fott-board {
+  --boardScale: var(--leftColumnScale);
+  --tokenScale: var(--leftColumnScale);
+  --cardScale: var(--boardScale);
+  --iconScale: var(--boardScale);
+
+
+}

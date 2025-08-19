@@ -1,4 +1,5 @@
 <?php
+
 /**
  *------
  * BGA framework: Gregory Isabelli & Emmanuel Colin & BoardGameArena
@@ -58,37 +59,108 @@ $machinestates = [
     // only keep this line if your initial state is not 2. In that case, uncomment and replace '2' by your first state id.
     // 1 => GameStateBuilder::gameSetup(2)->build(), 
 
-    2 => GameStateBuilder::create()
-        ->name('playerTurn')
-        ->description(clienttranslate('${actplayer} must play a card or pass'))
-        ->descriptionmyturn(clienttranslate('${you} must play a card or pass'))
-        ->type(StateType::ACTIVE_PLAYER)
-        ->args('argPlayerTurn')
-        ->possibleactions([
-            // these actions are called from the front with bgaPerformAction, and matched to the function on the game.php file
-            'actPlayCard', 
-            'actPass',
-        ])
-        ->transitions([
-            'playCard' => 3, 
-            'pass' => 3,
-        ])
+    98 => GameStateBuilder::endScore()->build(),
+
+    // .########.##....##..######...####.##....##.########
+    // .##.......###...##.##....##...##..###...##.##......
+    // .##.......####..##.##.........##..####..##.##......
+    // .######...##.##.##.##...####..##..##.##.##.######..
+    // .##.......##..####.##....##...##..##..####.##......
+    // .##.......##...###.##....##...##..##...###.##......
+    // .########.##....##..######...####.##....##.########
+
+
+    ST_GENERIC_NEXT_PLAYER => GameStateBuilder::create()
+        ->name(GENERIC_NEXT_PLAYER)
+        ->description('')
+        ->action('stGenericNextPlayer')
+        ->type(StateType::GAME)
         ->build(),
 
-    3 => GameStateBuilder::create()
-        ->name('nextPlayer')
+    ST_RESOLVE_STACK => GameStateBuilder::create()
+        ->name(START_GAME_ENGINE)
         ->description('')
         ->type(StateType::GAME)
-        ->action('stNextPlayer')
-        ->updateGameProgression(true)
-        ->transitions([
-            'endScore' => 98, 
-            'nextPlayer' => 2,
+        ->action('stResolveStack')
+        ->build(),
+
+    ST_CONFIRM_TURN => GameStateBuilder::create()
+        ->name(CONFIRM_TURN)
+        ->description(clienttranslate('${actplayer} must confirm or restart their turn'))
+        ->descriptionmyturn(clienttranslate('${you} must confirm or restart your turn'))
+        ->type(StateType::ACTIVE_PLAYER)
+        ->args('argsConfirmTurn')
+        ->action('stConfirmTurn')
+        ->possibleactions([
+            // these actions are called from the front with bgaPerformAction, and matched to the function on the game.php file
+            'act' . CONFIRM_TURN,
+            'actRestart',
+            'actUndoToStep',
         ])
         ->build(),
 
-    98 => GameStateBuilder::endScore()->build(),
+    ST_CONFIRM_PARTIAL_TURN => GameStateBuilder::create()
+        ->name(CONFIRM_PARTIAL_TURN)
+        ->description(clienttranslate('${actplayer} must confirm the switch of player'))
+        ->descriptionmyturn(clienttranslate('${you} must confirm the switch of player. You will not be able to restart turn'))
+        ->type(StateType::ACTIVE_PLAYER)
+        ->args('argsConfirmTurn')
+        ->action('stConfirmTurn')
+        ->possibleactions([
+            // these actions are called from the front with bgaPerformAction, and matched to the function on the game.php file
+            'act' . CONFIRM_PARTIAL_TURN,
+            'actRestart',
+            'actUndoToStep',
+        ])
+        ->build(),
+
+
+
+    // only keep this line if your initial state is not 2. In that case, uncomment and replace '2' by your first state id.
+    // 1 => GameStateBuilder::gameSetup(2)->build(), 
+
+    ST_START_GAME_ENGINE => GameStateBuilder::create()
+        ->name(START_GAME_ENGINE)
+        ->description('')
+        ->type(StateType::GAME)
+        ->action('stStartGameEngine')
+        ->build(),
+
+    ST_LOG_PHASE => GameStateBuilder::create()
+        ->name(LOG_PHASE)
+        ->description('')
+        ->type(StateType::GAME)
+        ->action('stAtomicAction')
+        ->build(),
+
+    // ....###....########..#######..##.....##.####..######.
+    // ...##.##......##....##.....##.###...###..##..##....##
+    // ..##...##.....##....##.....##.####.####..##..##......
+    // .##.....##....##....##.....##.##.###.##..##..##......
+    // .#########....##....##.....##.##.....##..##..##......
+    // .##.....##....##....##.....##.##.....##..##..##....##
+    // .##.....##....##.....#######..##.....##.####..######.
+
+    // ....###.....######..########.####..#######..##....##..######.
+    // ...##.##...##....##....##.....##..##.....##.###...##.##....##
+    // ..##...##..##..........##.....##..##.....##.####..##.##......
+    // .##.....##.##..........##.....##..##.....##.##.##.##..######.
+    // .#########.##..........##.....##..##.....##.##..####.......##
+    // .##.....##.##....##....##.....##..##.....##.##...###.##....##
+    // .##.....##..######.....##....####..#######..##....##..######.
+
+    ST_TAKE_ACTION => GameStateBuilder::create()
+        ->name(TAKE_ACTION)
+        ->description(clienttranslate('${actplayer} must perform an action'))
+        ->descriptionmyturn(clienttranslate('${you}'))
+        ->type(StateType::ACTIVE_PLAYER)
+        ->args('argsAtomicAction')
+        ->possibleactions([
+            // these actions are called from the front with bgaPerformAction, and matched to the function on the game.php file
+            'act' . TAKE_ACTION,
+            'actTakeAtomicAction',
+            'actRestart',
+            'actUndoToStep',
+        ])
+        ->build(),
 ];
-
-
-

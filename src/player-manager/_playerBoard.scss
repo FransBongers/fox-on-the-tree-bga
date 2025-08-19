@@ -1,0 +1,10 @@
+@use "sass:math";
+@use "sass:map";
+
+.fott-player-row {
+  width: calc(var(--rightColumnScale) * 1000px);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: calc(var(--rightColumnScale) * 8px);
+}
