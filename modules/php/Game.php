@@ -27,9 +27,12 @@ require_once("constants.inc.php");
 use Bga\Games\FoxOnTheTree\Boilerplate\Core\Engine;
 
 use Bga\Games\FoxOnTheTree\Boilerplate\Core\Globals;
-
+use Bga\Games\FoxOnTheTree\Managers\ActionTokens;
+use Bga\Games\FoxOnTheTree\Managers\Animals;
+use Bga\Games\FoxOnTheTree\Managers\AnimalTokens;
+use Bga\Games\FoxOnTheTree\Managers\Cards;
 use Bga\Games\FoxOnTheTree\Managers\Players;
-
+use Bga\Games\FoxOnTheTree\Models\Animal;
 
 class Game extends \Bga\GameFramework\Table
 {
@@ -261,7 +264,8 @@ class Game extends \Bga\GameFramework\Table
             'staticData' => [
        
             ],
-
+            'animals' => Animals::getAll(),
+            'actionTokens' => ActionTokens::getAll(),
         ];
 
 
@@ -278,10 +282,11 @@ class Game extends \Bga\GameFramework\Table
         Globals::setupNewGame($players, $options);
 
         Players::setupNewGame($players, $options);
+        Cards::setupNewGame($players, $options);
+        ActionTokens::setupNewGame($players, $options);
+        Animals::setupNewGame($players, $options);
+        AnimalTokens::setupNewGame($players, $options);
 
-
-
-        $players = Players::getAll()->toArray();
 
 
 

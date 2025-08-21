@@ -7,6 +7,7 @@ use Bga\Games\FoxOnTheTree\Boilerplate\Core\Notifications;
 use Bga\Games\FoxOnTheTree\Boilerplate\Core\Preferences;
 use Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Locations;
 use Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Utils;
+use Bga\Games\FoxOnTheTree\Managers\Cards;
 use Bga\Games\FoxOnTheTree\Managers\IndictmentCards;
 use Bga\Games\FoxOnTheTree\Managers\Pawns;
 use Bga\Games\FoxOnTheTree\Managers\PlayerCubes;
@@ -48,11 +49,13 @@ class Player extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\DB_Model
     $data = parent::jsonSerialize();
     $isCurrentPlayer = intval($currentPlayerId) == $this->getId();
 
-
+    $handCards =  Cards::getInLocation(Locations::hand($this->getId()))->toArray();
 
     return array_merge(
       $data,
-      [],
+      [
+        'hand' => $isCurrentPlayer ? $handCards : [],
+      ],
     );
   }
 

@@ -7,7 +7,10 @@ use Bga\Games\FoxOnTheTree\Boilerplate\Core\Engine;
 use Bga\Games\FoxOnTheTree\Boilerplate\Core\Notifications;
 use Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Locations;
 use Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Utils;
-
+use Bga\Games\FoxOnTheTree\Managers\Cards;
+use Bga\Games\FoxOnTheTree\Managers\ActionTokens;
+use Bga\Games\FoxOnTheTree\Managers\Animals;
+use Bga\Games\FoxOnTheTree\Managers\AnimalTokens;
 
 trait DebugTrait
 {
@@ -18,7 +21,7 @@ trait DebugTrait
 
   function debug_test()
   {
-
+    AnimalTokens::setupNewGame();
 
 
   }

@@ -20,8 +20,9 @@
 @use './tokens';
 
 html {
-  background-image: url('img/background.jpg');
+  // background-image: url('img/background.jpg');
   background-attachment: fixed;
+  background: rgb(12,15,44) !important;
 }
 
 #play-area-container {

@@ -638,7 +638,7 @@ class FoxOnTheTree implements Game {
 
     const ROOT = document.documentElement;
     let WIDTH = $('play-area-container').getBoundingClientRect()['width'] - 8;
-    const LEFT_COLUMN = 1500;
+    const LEFT_COLUMN = 2080;
     const RIGHT_COLUMN = 1000;
 
     if (settings.get(PREF_TWO_COLUMN_LAYOUT) === PREF_ENABLED) {

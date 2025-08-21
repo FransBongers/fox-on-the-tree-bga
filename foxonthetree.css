@@ -254,6 +254,71 @@ body > .card {
   --tokenScale: var(--leftColumnScale);
   --cardScale: var(--boardScale);
   --iconScale: var(--boardScale);
+  min-width: 100%;
+}
+#fott-board #fott-tiles {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  gap: calc(var(--boardScale) * 8px);
+  padding: calc(var(--boardScale) * 4px);
+}
+
+.fott-tile {
+  width: calc(var(--boardScale) * 200px);
+  aspect-ratio: 502/501;
+  background-image: url("img/tiles.jpg");
+  background-size: 500% 200%;
+}
+
+.fott-tile[data-tile-id=Tile01] {
+  background-position-x: 0%;
+  background-position-y: 0%;
+}
+
+.fott-tile[data-tile-id=Tile02] {
+  background-position-x: 25%;
+  background-position-y: 0%;
+}
+
+.fott-tile[data-tile-id=Tile03] {
+  background-position-x: 50%;
+  background-position-y: 0%;
+}
+
+.fott-tile[data-tile-id=Tile04] {
+  background-position-x: 75%;
+  background-position-y: 0%;
+}
+
+.fott-tile[data-tile-id=Tile05] {
+  background-position-x: 100%;
+  background-position-y: 0%;
+}
+
+.fott-tile[data-tile-id=Tile06] {
+  background-position-x: 0%;
+  background-position-y: 100%;
+}
+
+.fott-tile[data-tile-id=Tile07] {
+  background-position-x: 25%;
+  background-position-y: 100%;
+}
+
+.fott-tile[data-tile-id=Tile08] {
+  background-position-x: 50%;
+  background-position-y: 100%;
+}
+
+.fott-tile[data-tile-id=Tile09] {
+  background-position-x: 75%;
+  background-position-y: 100%;
+}
+
+.fott-tile[data-tile-id=Tile10] {
+  background-position-x: 100%;
+  background-position-y: 100%;
 }
 
 #info-panel {
@@ -979,8 +1044,8 @@ span[style*="color:#c0c0c0"] {
 }
 
 html {
-  background-image: url("img/background.jpg");
   background-attachment: fixed;
+  background: rgb(12, 15, 44) !important;
 }
 
 #play-area-container {

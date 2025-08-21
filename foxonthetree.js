@@ -3538,7 +3538,7 @@ var FoxOnTheTree = (function () {
         $('play-area-container').setAttribute('data-two-columns', settings.get(PREF_TWO_COLUMN_LAYOUT));
         var ROOT = document.documentElement;
         var WIDTH = $('play-area-container').getBoundingClientRect()['width'] - 8;
-        var LEFT_COLUMN = 1500;
+        var LEFT_COLUMN = 2080;
         var RIGHT_COLUMN = 1000;
         if (settings.get(PREF_TWO_COLUMN_LAYOUT) === PREF_ENABLED) {
             WIDTH = WIDTH - 8;
@@ -3721,7 +3721,7 @@ var Board = (function () {
     Board.prototype.setupSelectBoxes = function () { };
     return Board;
 }());
-var tplBoard = function (gamedatas) { return "<div id=\"fott-board\">\n\n\n  <div id=\"fott-select-boxes\"></div>\n\n</div>"; };
+var tplBoard = function (gamedatas) { return "<div id=\"fott-board\">\n  <div id=\"fott-tiles\">\n    <div class=\"fott-tile\" data-tile-id=\"Tile01\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile02\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile03\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile04\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile05\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile06\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile07\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile08\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile09\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile10\"></div>\n  </div>\n  <div id=\"fott-select-boxes\"></div>\n</div>"; };
 var LOG_TOKEN_BOLD_TEXT = 'boldText';
 var LOG_TOKEN_BOLD_ITALIC_TEXT = 'boldItalicText';
 var LOG_TOKEN_NEW_LINE = 'newLine';

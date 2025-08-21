@@ -22,15 +22,9 @@ class Globals extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\DB_Manager
     'logState' => 'int', // Used to store state id when enabling the log
     'firstPlayer' => 'int',
     // Game options
-    
+
     // Other
-    'candelabra' => 'int',
-    'communityJoy' => 'int',
-    'currentWeek' => 'int',
-    'dice' => 'obj',
-    'playerCubes' => 'obj',
-    'festivity' => 'obj',
-    'playersWhoGainedIndictment' => 'obj',
+
   ];
 
   protected static $table = 'global_variables';
@@ -154,12 +148,5 @@ class Globals extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\DB_Manager
   /*
    * Setup new game
    */
-  public static function setupNewGame($players, $options)
-  {
-    self::setCommunityJoy(0);
-    self::setCurrentWeek(1);
- 
-  }
-
-
+  public static function setupNewGame($players, $options) {}
 }
