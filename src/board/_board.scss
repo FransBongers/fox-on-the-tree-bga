@@ -7,6 +7,7 @@
   --tokenScale: var(--leftColumnScale);
   --cardScale: var(--boardScale);
   --iconScale: var(--boardScale);
+  --tileScale: var(--leftColumnScale) * var(--tileSizeMultiplier);
   min-width: 100%;
   // background-color: yellow;
   // width: calc(var(--boardScale) * 2000px);
@@ -18,28 +19,54 @@
     flex-direction: row;
     gap: calc(var(--boardScale) * 8px);
     padding: calc(var(--boardScale) * 4px);
+    width: calc(var(--leftColumnScale) * 2080px);
   }
 }
 
 .fott-tile {
-  width: calc(var(--boardScale) * 200px);
+  width: calc(var(--tileScale) * 200px);
   aspect-ratio: 502 / 501;
   background-image: url('img/tiles.jpg');
   background-size: 500% 200%;
   // outline: solid calc(var(--boardScale) * 4px) yellow;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+
+  // --tokenScale: var(--tileScale) * 1.5;
+}
+
+.fott-tile.selectable {
+  cursor: pointer;
+  outline: solid calc(var(--tileScale) * 4px) base.$selectable-color;
+}
+
+.fott-tile.selectable:hover,
+.fott-tile.selected {
+  cursor: pointer;
+  outline: solid calc(var(--tileScale) * 4px) base.$selected-color;
+}
+
+#fott-points-tracker,
+#fott-set-aside-standees {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 $tiles: (
-  1: 'Tile01',
-  2: 'Tile02',
-  3: 'Tile03',
-  4: 'Tile04',
-  5: 'Tile05',
-  6: 'Tile06',
-  7: 'Tile07',
-  8: 'Tile08',
-  9: 'Tile09',
-  10: 'Tile10',
+  1: 'Farm',
+  2: 'Tile01',
+  3: 'Tile02',
+  4: 'Tile03',
+  5: 'Tile04',
+  6: 'Tile05',
+  7: 'Tile06',
+  8: 'Tile07',
+  9: 'Tile08',
+  10: 'LairOfPredators',
 );
 
 @for $i from 1 through 10 {
@@ -47,4 +74,55 @@ $tiles: (
     background-position-x: math.div((($i - 1) % 5 * 100%), 4);
     background-position-y: math.div(math.floor(calc(($i - 1) / 5)) * 100%, 1);
   }
+}
+
+.fott-animal {
+  width: calc(var(--tokenScale) * 80px);
+  aspect-ratio: 375 / 400;
+  background-image: url('img/animals.png');
+  background-size: 400% 200%;
+  transition: tranform 1s;
+}
+
+.fott-animal[data-type='FarmAnimal'][data-phase='1'] {
+  transform: scaleX(-1);
+}
+
+.fott-animal[data-type='Predator'][data-phase='2'] {
+  transform: scaleX(-1);
+}
+
+$animals: (
+  1: 'Bear',
+  2: 'Chicken',
+  3: 'Cow',
+  4: 'Fox',
+  5: 'Goat',
+  6: 'Pig',
+  7: 'Tiger',
+  8: 'Wolf',
+);
+
+@for $i from 1 through 8 {
+  .fott-animal[data-animal='#{map.get($animals,$i)}'] {
+    background-position-x: math.div((($i - 1) % 4 * 100%), 3);
+    background-position-y: math.div(math.floor(calc(($i - 1) / 4)) * 100%, 1);
+  }
+}
+
+.fott-animal.selectable {
+  cursor: pointer;
+  filter: drop-shadow(2px 0px 0px base.$selectable-color)
+    drop-shadow(-2px 0px 0px base.$selectable-color)
+    drop-shadow(0px 2px 0px base.$selectable-color)
+    drop-shadow(0px -2px 0px base.$selectable-color);
+}
+
+.fott-animal.selectable:hover,
+.fott-animal.selected {
+  cursor: pointer;
+  filter: drop-shadow(2px 0px 0px base.$selected-color)
+    drop-shadow(-2px 0px 0px base.$selected-color)
+    drop-shadow(0px 2px 0px base.$selected-color)
+    drop-shadow(0px -2px 0px base.$selected-color);
 }

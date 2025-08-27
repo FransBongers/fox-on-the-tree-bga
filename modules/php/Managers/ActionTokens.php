@@ -96,4 +96,25 @@ class ActionTokens extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Pieces
   {
     return explode('_', $id)[0];
   }
+
+  public static function getTokenForPlayer($type, $playerId)
+  {
+    $tokenId = implode('_', [$type, $playerId]);
+    $token = self::get($tokenId);
+    if ($token == null) {
+      throw new \feException("ERROR_004");
+    }
+    return $token;
+  }
+
+    public static function getTokenOfTypeOnTile($tileId, $type)
+  {
+    $tokens = self::getInLocation($tileId);
+    foreach ($tokens as $token) {
+      if ($token->getType() == $type) {
+        return $token;
+      }
+    }
+    return null;
+  }
 }

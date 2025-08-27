@@ -21,9 +21,8 @@ trait DebugTrait
 
   function debug_test()
   {
-    AnimalTokens::setupNewGame();
-
-
+    Notifications::log('direction', Animals::get(BEAR)->getDirection());
+    Notifications::log('special', Animals::get(BEAR)->getMoveOptions());
   }
 
   function debug_engineDisplay()

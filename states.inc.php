@@ -78,10 +78,13 @@ $machinestates = [
         ->build(),
 
     ST_RESOLVE_STACK => GameStateBuilder::create()
-        ->name(START_GAME_ENGINE)
+        ->name(RESOLVE_STACK)
         ->description('')
         ->type(StateType::GAME)
         ->action('stResolveStack')
+        ->transitions([
+            'next' => ST_RESOLVE_STACK
+        ])
         ->build(),
 
     ST_CONFIRM_TURN => GameStateBuilder::create()
@@ -133,6 +136,41 @@ $machinestates = [
         ->action('stAtomicAction')
         ->build(),
 
+    ST_RESOLVE_CONFLICT => GameStateBuilder::create()
+        ->name(RESOLVE_CONFLICT)
+        ->description('')
+        ->type(StateType::GAME)
+        ->action('stAtomicAction')
+        ->build(),
+
+    ST_CHECK_REACH_FINAL_TILE => GameStateBuilder::create()
+        ->name(CHECK_REACH_FINAL_TILE)
+        ->description('')
+        ->type(StateType::GAME)
+        ->action('stAtomicAction')
+        ->build(),
+
+    ST_ELIMINATE_ANIMALS => GameStateBuilder::create()
+        ->name(ELIMINATE_ANIMALS)
+        ->description('')
+        ->type(StateType::GAME)
+        ->action('stAtomicAction')
+        ->build(),
+
+    ST_END_OF_FIRST_PHASE => GameStateBuilder::create()
+        ->name(END_OF_FIRST_PHASE)
+        ->description('')
+        ->type(StateType::GAME)
+        ->action('stAtomicAction')
+        ->build(),
+
+    ST_PRE_END_OF_GAME => GameStateBuilder::create()
+        ->name(PRE_END_OF_GAME)
+        ->description('')
+        ->type(StateType::GAME)
+        ->action('stAtomicAction')
+        ->build(),
+
     // ....###....########..#######..##.....##.####..######.
     // ...##.##......##....##.....##.###...###..##..##....##
     // ..##...##.....##....##.....##.####.####..##..##......
@@ -149,6 +187,23 @@ $machinestates = [
     // .##.....##.##....##....##.....##..##.....##.##...###.##....##
     // .##.....##..######.....##....####..#######..##....##..######.
 
+    ST_USE_ACTION_TOKEN => GameStateBuilder::create()
+        ->name(USE_ACTION_TOKEN)
+        ->description(clienttranslate('${actplayer} may use an action token'))
+        ->descriptionmyturn(clienttranslate('${you}'))
+        ->type(StateType::ACTIVE_PLAYER)
+        ->args('argsAtomicAction')
+        ->possibleactions([
+            // these actions are called from the front with bgaPerformAction, and matched to the function on the game.php file
+            'act' . USE_ACTION_TOKEN,
+            'actTakeAtomicAction',
+            'actRestart',
+            'actUndoToStep',
+            'actPassOptionalAction',
+        ])
+        ->updateGameProgression(true)
+        ->build(),
+
     ST_TAKE_ACTION => GameStateBuilder::create()
         ->name(TAKE_ACTION)
         ->description(clienttranslate('${actplayer} must perform an action'))
@@ -161,6 +216,22 @@ $machinestates = [
             'actTakeAtomicAction',
             'actRestart',
             'actUndoToStep',
+        ])
+        ->build(),
+
+    ST_ESCAPE => GameStateBuilder::create()
+        ->name(ESCAPE)
+        ->description(clienttranslate('${actplayer} may escape'))
+        ->descriptionmyturn(clienttranslate('${you}'))
+        ->type(StateType::MULTIPLE_ACTIVE_PLAYER)
+        ->args('argsAtomicAction')
+        ->possibleactions([
+            'actEscape',
+            'actPass',
+            'actTakeAtomicAction',
+        ])
+        ->transitions([
+            'next' => ST_RESOLVE_STACK
         ])
         ->build(),
 ];

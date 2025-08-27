@@ -95,6 +95,11 @@ class Notifications
     ]);
   }
 
+  public static function phase($text, $args = [])
+  {
+    self::notifyAll('phase', $text, $args);
+  }
+
   // .##.....##.########..########.....###....########.########
   // .##.....##.##.....##.##.....##...##.##......##....##......
   // .##.....##.##.....##.##.....##..##...##.....##....##......
@@ -133,7 +138,22 @@ class Notifications
   //  ..#######.....##....####.########.####....##.......##...
 
 
+  private static function getAnimalsLog($animals)
+  {
+    $animalsLog = '';
+    $animalsLogArgs = [];
 
+    foreach ($animals as $index => $animal) {
+      $key = 'tkn_animal_' . $index;
+      $animalsLog = $animalsLog . '${' . $key . '}';
+      $animalsLogArgs[$key] = $animal->getId();
+    }
+
+    return [
+      'log' => $animalsLog,
+      'args' => $animalsLogArgs,
+    ];
+  }
 
   // ..######......###....##.....##.########
   // .##....##....##.##...###...###.##......
@@ -151,4 +171,91 @@ class Notifications
   // .##...###.##.....##....##.....##..##.......##....##
   // .##....##..#######.....##....####.##........######.
 
+  public static function conflictResult($result, $winningAnimals, $eliminatedAnimals)
+  {
+    $text = '';
+    $args = [
+      'animals_log' => self::getAnimalsLog($winningAnimals),
+    ];
+
+    $multipleWinners = count($winningAnimals) > 1;
+
+    if ($result === FARM_ANIMALS_OUTNUMBER) {
+      $text = clienttranslate('${animals_log} outnumber the predators');
+    } else if ($result === FARM_ANIMAL_ON_PREVIOUS_TILE) {
+      $text = $multipleWinners ? clienttranslate('${animals_log} are supported by a farm animal on the previous tile') : clienttranslate('${animals_log} is supported by a farm animal on the previous tile');
+    } else if ($result === PREDATORS_ARE_STRONGER) {
+      $text = $multipleWinners ? clienttranslate('${animals_log} are stronger than the farm animals') : clienttranslate('${animals_log} is stronger than the farm animal');
+    }
+
+    self::message($text, $args);
+  }
+
+  public static function discardActionToken($player, $actionToken, $location)
+  {
+    $args = [
+      'player' => $player,
+      'actionToken' => $actionToken,
+      'location' => $location,
+      'tkn_actionToken' => $actionToken->getType(),
+    ];
+
+    $text = clienttranslate('${player_name} discards ${tkn_actionToken}');
+    if (in_array($location, TILES)) {
+      $text = clienttranslate('${player_name} discards ${tkn_actionToken} from ${tkn_tile}');
+      $args['tkn_tile'] = $location;
+    }
+
+    self::notifyAll('discardActionToken', $text, $args);
+  }
+
+  public static function moveAnimal($player, $animal, $tileId, $moveType)
+  {
+    $text = clienttranslate('${player_name} moves ${tkn_animal} to ${tkn_tile}');
+    $args = [
+      'player' => $player,
+      'animal' => $animal->jsonSerialize(),
+      'tileId' => $tileId,
+      'tkn_animal' => $animal->getId(),
+      'tkn_tile' => $tileId,
+    ];
+
+    if ($moveType === SPECIAL  && $animal->isPredator()) {
+      $text = clienttranslate('${player_name} uses Jump to move ${tkn_animal} to ${tkn_tile}');
+    } else if ($moveType === SPECIAL && $animal->isFarmAnimal()) {
+      $text = clienttranslate('${player_name} uses Dodge to move ${tkn_animal} to ${tkn_tile}');
+    } else if ($moveType === BANANA) {
+      $text = clienttranslate('${player_name} moves ${tkn_animal} one tile further to ${tkn_tile} due to ${tkn_actionToken}');
+      $args['tkn_actionToken'] = BANANA;
+    }
+    if ($moveType === RETURN_TO_STARTING_TILE) {
+      $text = clienttranslate('${player_name} uses ${tkn_actionToken} to return ${tkn_animal} to ${tkn_tile}');
+      $args['tkn_actionToken'] = ESCAPE;
+    }
+
+    self::notifyAll('moveAnimal', $text, $args);
+  }
+
+  public static function placeActionToken($player, $actionToken, $tileId)
+  {
+    self::notifyAll('placeActionToken', clienttranslate('${player_name} places ${tkn_actionToken} on ${tkn_tile}'), [
+      'player' => $player,
+      'tileId' => $tileId,
+      'actionToken' => $actionToken,
+      'tkn_actionToken' => $actionToken->getType(),
+      'tkn_tile' => $tileId,
+    ]);
+  }
+
+  public static function scorePoints($animal, $phase, $numberOfPoints, $animalToken = null)
+  {
+    $text = $numberOfPoints === 1 ? clienttranslate('${tkn_animal} scores ${tkn_boldText_number} point') : clienttranslate('${tkn_animal} scores ${tkn_boldText_number} points');
+    self::notifyAll('scorePoints', $text, [
+      'phase' => $phase,
+      'animal' => $animal->jsonSerialize(),
+      'animalToken' => $animalToken,
+      'tkn_boldText_number' => $numberOfPoints,
+      'tkn_animal' => $animal->getId(),
+    ]);
+  }
 }

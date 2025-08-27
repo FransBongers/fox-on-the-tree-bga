@@ -208,9 +208,23 @@ class Game extends \Bga\GameFramework\Table
      */
     public function getGameProgression()
     {
-        // TODO: compute and return the game progression
+        $progression = 0;
 
-        return 0;
+        $animals = Animals::getAll();
+        $numberOfAnimalsOnTiles = 0;
+        foreach ($animals as $animal) {
+            if ($animal->isOnTile()) {
+                $numberOfAnimalsOnTiles++;
+            }
+        }
+
+        $progression = round(50 - ($numberOfAnimalsOnTiles / 8) * 50);
+
+        if (Globals::getPhase() === SECOND_PHASE) {
+            $progression += 50;
+        }
+
+        return $progression;
     }
 
 
@@ -261,11 +275,10 @@ class Game extends \Bga\GameFramework\Table
             'gameOptions' => [],
             'playerOrder' => Players::getTurnOrder($playerId),
             'players' => Players::getUiData($playerId),
-            'staticData' => [
-       
-            ],
+            'staticData' => [],
             'animals' => Animals::getAll(),
             'actionTokens' => ActionTokens::getAll(),
+            'phase' => Globals::getPhase(),
         ];
 
 

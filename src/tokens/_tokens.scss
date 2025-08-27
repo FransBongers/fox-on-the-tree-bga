@@ -1,0 +1,37 @@
+@use '../base';
+
+.fott-action-token {
+  width: calc(var(--tokenScale) * 48px);
+  aspect-ratio: 402 / 432;
+  background-image: url('img/tokens.png');
+  background-size: 300% 100%;
+}
+
+.fott-action-token[data-type='Banana'] {
+  background-position-x: 0%;
+}
+
+.fott-action-token[data-type='Escape'] {
+  background-position-x: 50%;
+}
+
+.fott-action-token[data-type='Swamp'] {
+  background-position-x: 100%;
+}
+
+.fott-action-token.selectable {
+  cursor: pointer;
+  filter: drop-shadow(2px 0px 0px base.$selectable-color)
+    drop-shadow(-2px 0px 0px base.$selectable-color)
+    drop-shadow(0px 2px 0px base.$selectable-color)
+    drop-shadow(0px -2px 0px base.$selectable-color);
+}
+
+.fott-action-token.selectable:hover,
+.fott-action-token.selected {
+  cursor: pointer;
+  filter: drop-shadow(2px 0px 0px base.$selected-color)
+    drop-shadow(-2px 0px 0px base.$selected-color)
+    drop-shadow(0px 2px 0px base.$selected-color)
+    drop-shadow(0px -2px 0px base.$selected-color);
+}

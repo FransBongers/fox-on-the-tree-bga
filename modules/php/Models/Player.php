@@ -49,12 +49,12 @@ class Player extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\DB_Model
     $data = parent::jsonSerialize();
     $isCurrentPlayer = intval($currentPlayerId) == $this->getId();
 
-    $handCards =  Cards::getInLocation(Locations::hand($this->getId()))->toArray();
+    $cards =  Cards::getInLocation(Locations::hand($this->getId()))->toArray();
 
     return array_merge(
       $data,
       [
-        'hand' => $isCurrentPlayer ? $handCards : [],
+        'card' => $isCurrentPlayer && count($cards) > 0 ? $cards[0] : null,
       ],
     );
   }
@@ -62,5 +62,10 @@ class Player extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\DB_Model
   public function getId()
   {
     return (int) parent::getId();
+  }
+
+  public function getCard()
+  {
+    return Cards::getInLocation(Locations::hand($this->getId()))->toArray()[0];
   }
 }

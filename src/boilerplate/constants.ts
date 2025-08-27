@@ -21,6 +21,7 @@ const PREF_COLUMN_SIZES = 'columnSizes';
 const PREF_DISABLED = 'disabled';
 const PREF_ENABLED = 'enabled';
 const PREF_SINGLE_COLUMN_MAP_SIZE = 'singleColumnMapSize';
+const PREF_TILE_SIZE = 'tileSize';
 const PREF_TWO_COLUMN_LAYOUT = 'twoColumnLayout';
 
 /**

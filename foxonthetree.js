@@ -12,9 +12,69 @@ var PREF_COLUMN_SIZES = 'columnSizes';
 var PREF_DISABLED = 'disabled';
 var PREF_ENABLED = 'enabled';
 var PREF_SINGLE_COLUMN_MAP_SIZE = 'singleColumnMapSize';
+var PREF_TILE_SIZE = 'tileSize';
 var PREF_TWO_COLUMN_LAYOUT = 'twoColumnLayout';
 var BOARD_SCALE = 'boardScale';
 var CARD_SCALE = 'cardScale';
+var BANANA = 'Banana';
+var SWAMP = 'Swamp';
+var ESCAPE = 'Escape';
+var ACTION_TOKENS = [
+    BANANA,
+    SWAMP,
+    ESCAPE,
+];
+var BEAR = 'Bear';
+var CHICKEN = 'Chicken';
+var COW = 'Cow';
+var FOX = 'Fox';
+var GOAT = 'Goat';
+var PIG = 'Pig';
+var TIGER = 'Tiger';
+var WOLF = 'Wolf';
+var ANIMALS = [
+    BEAR,
+    CHICKEN,
+    COW,
+    FOX,
+    GOAT,
+    PIG,
+    TIGER,
+    WOLF,
+];
+var FARM_ANIMAL = 'FarmAnimal';
+var PREDATOR = 'Predator';
+var FARM = 'Farm';
+var LAIR_OF_PREDATORS = 'LairOfPredators';
+var TILE_01 = 'Tile01';
+var TILE_02 = 'Tile02';
+var TILE_03 = 'Tile03';
+var TILE_04 = 'Tile04';
+var TILE_05 = 'Tile05';
+var TILE_06 = 'Tile06';
+var TILE_07 = 'Tile07';
+var TILE_08 = 'Tile08';
+var TILES = [
+    FARM,
+    TILE_01,
+    TILE_02,
+    TILE_03,
+    TILE_04,
+    TILE_05,
+    TILE_06,
+    TILE_07,
+    TILE_08,
+    LAIR_OF_PREDATORS,
+];
+var MOVE = 'move';
+var SWAMP_RESCUE = 'swampRescue';
+var FIRST_PHASE = 1;
+var SECOND_PHASE = 2;
+var LEFT = -1;
+var RIGHT = 1;
+var BASIC = 'basic';
+var SPECIAL = 'special';
+var SET_ASIDE_STANDEES = 'setAsideStandees';
 var BgaAnimation = (function () {
     function BgaAnimation(animationFunction, settings) {
         this.animationFunction = animationFunction;
@@ -2663,6 +2723,10 @@ var NotificationManager = (function () {
             'log',
             'message',
             'phase',
+            'discardActionToken',
+            'moveAnimal',
+            'placeActionToken',
+            'scorePoints',
         ];
         notifs.forEach(function (notifName) {
             _this.subscriptions.push(dojo.subscribe(notifName, _this, function (notifDetails) {
@@ -2717,10 +2781,86 @@ var NotificationManager = (function () {
             });
         });
     };
-    NotificationManager.prototype.notif_phase = function (_notif) {
-        return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
-            return [2];
-        }); });
+    NotificationManager.prototype.notif_phase = function (notif) {
+        return __awaiter(this, void 0, void 0, function () {
+            var phase, board;
+            var _this = this;
+            return __generator(this, function (_a) {
+                phase = notif.args.phase;
+                if (phase !== SECOND_PHASE) {
+                    return [2];
+                }
+                board = Board.getInstance();
+                Object.entries(board.ui.animals).forEach(function (_a) {
+                    var animalId = _a[0], animalElt = _a[1];
+                    animalElt.dataset.phase = '2';
+                    var type = _this.game.gamedatas.animals[animalId].type;
+                    if (type === 'Predator') {
+                        board.ui.containers.tiles[FARM].appendChild(animalElt);
+                    }
+                    else {
+                        board.ui.containers.tiles[LAIR_OF_PREDATORS].appendChild(animalElt);
+                    }
+                });
+                return [2];
+            });
+        });
+    };
+    NotificationManager.prototype.notif_discardActionToken = function (notif) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, playerId, actionToken, tokenElt;
+            return __generator(this, function (_b) {
+                _a = notif.args, playerId = _a.playerId, actionToken = _a.actionToken;
+                tokenElt = Tokens.getInstance().ui.actionTokens[actionToken.id];
+                if (!tokenElt) {
+                    return [2];
+                }
+                tokenElt.remove();
+                return [2];
+            });
+        });
+    };
+    NotificationManager.prototype.notif_moveAnimal = function (notif) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, playerId, animal, tileId, board, animalElt;
+            return __generator(this, function (_b) {
+                _a = notif.args, playerId = _a.playerId, animal = _a.animal, tileId = _a.tileId;
+                board = Board.getInstance();
+                animalElt = board.ui.animals[animal.id];
+                board.ui.containers.tiles[tileId].appendChild(animalElt);
+                return [2];
+            });
+        });
+    };
+    NotificationManager.prototype.notif_placeActionToken = function (notif) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, playerId, actionToken, tileId, tokenElt;
+            return __generator(this, function (_b) {
+                _a = notif.args, playerId = _a.playerId, actionToken = _a.actionToken, tileId = _a.tileId;
+                tokenElt = Tokens.getInstance().ui.actionTokens[actionToken.id];
+                if (!tokenElt) {
+                    return [2];
+                }
+                Board.getInstance().ui.containers.tiles[tileId].appendChild(tokenElt);
+                return [2];
+            });
+        });
+    };
+    NotificationManager.prototype.notif_scorePoints = function (notif) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, animal, animalToken, phase, board;
+            return __generator(this, function (_b) {
+                _a = notif.args, animal = _a.animal, animalToken = _a.animalToken, phase = _a.phase;
+                board = Board.getInstance();
+                if (phase === FIRST_PHASE) {
+                    board.ui.containers.setAsideStandees.appendChild(board.ui.animals[animal.id]);
+                }
+                else {
+                    board.ui.containers.pointsTracker.appendChild(board.ui.animals[animal.id]);
+                }
+                return [2];
+            });
+        });
     };
     return NotificationManager;
 }());
@@ -2730,23 +2870,6 @@ var getSettingsConfig = function () {
         layout: {
             id: 'layout',
             config: (_a = {
-                    twoColumnLayout: {
-                        id: PREF_TWO_COLUMN_LAYOUT,
-                        onChangeInSetup: true,
-                        defaultValue: 'disabled',
-                        label: _('Two column layout'),
-                        type: 'select',
-                        options: [
-                            {
-                                label: _('Enabled'),
-                                value: 'enabled',
-                            },
-                            {
-                                label: _('Disabled (single column)'),
-                                value: 'disabled',
-                            },
-                        ],
-                    },
                     columnSizes: {
                         id: PREF_COLUMN_SIZES,
                         onChangeInSetup: true,
@@ -2767,29 +2890,10 @@ var getSettingsConfig = function () {
                         type: 'slider',
                     }
                 },
-                _a[PREF_SINGLE_COLUMN_MAP_SIZE] = {
-                    id: PREF_SINGLE_COLUMN_MAP_SIZE,
+                _a[PREF_TILE_SIZE] = {
+                    id: PREF_TILE_SIZE,
                     onChangeInSetup: true,
-                    label: _('Map size'),
-                    defaultValue: 100,
-                    visibleCondition: {
-                        id: PREF_TWO_COLUMN_LAYOUT,
-                        values: [DISABLED],
-                    },
-                    sliderConfig: {
-                        step: 5,
-                        padding: 0,
-                        range: {
-                            min: 30,
-                            max: 100,
-                        },
-                    },
-                    type: 'slider',
-                },
-                _a[PREF_CARD_SIZE] = {
-                    id: PREF_CARD_SIZE,
-                    onChangeInSetup: false,
-                    label: _("Size of cards"),
+                    label: _('Tile size'),
                     defaultValue: 100,
                     sliderConfig: {
                         step: 5,
@@ -2799,39 +2903,7 @@ var getSettingsConfig = function () {
                             max: 200,
                         },
                     },
-                    type: "slider",
-                },
-                _a[PREF_CARD_SIZE_IN_LOG] = {
-                    id: PREF_CARD_SIZE_IN_LOG,
-                    onChangeInSetup: true,
-                    label: _('Size of cards in log'),
-                    defaultValue: 0,
-                    sliderConfig: {
-                        step: 5,
-                        padding: 0,
-                        range: {
-                            min: 0,
-                            max: 140,
-                        },
-                    },
                     type: 'slider',
-                },
-                _a[PREF_CARD_INFO_IN_TOOLTIP] = {
-                    id: PREF_CARD_INFO_IN_TOOLTIP,
-                    onChangeInSetup: false,
-                    defaultValue: PREF_ENABLED,
-                    label: _('Show card info in tooltip'),
-                    type: 'select',
-                    options: [
-                        {
-                            label: _('Enabled'),
-                            value: PREF_ENABLED,
-                        },
-                        {
-                            label: _('Disabled (card image only)'),
-                            value: PREF_DISABLED,
-                        },
-                    ],
                 },
                 _a),
         },
@@ -2898,15 +2970,15 @@ var getSettingsConfig = function () {
 var Settings = (function () {
     function Settings(game) {
         this.settings = {};
-        this.selectedTab = "layout";
+        this.selectedTab = 'layout';
         this.tabs = [
             {
-                id: "layout",
-                name: _("Layout"),
+                id: 'layout',
+                name: _('Layout'),
             },
             {
-                id: "gameplay",
-                name: _("Gameplay"),
+                id: 'gameplay',
+                name: _('Gameplay'),
             },
         ];
         this.game = game;
@@ -2925,23 +2997,23 @@ var Settings = (function () {
     };
     Settings.prototype.addButton = function (_a) {
         var gamedatas = _a.gamedatas;
-        var configPanel = document.getElementById("info-panel-buttons");
+        var configPanel = document.getElementById('info-panel-buttons');
         if (configPanel) {
-            configPanel.insertAdjacentHTML("beforeend", tplSettingsButton());
+            configPanel.insertAdjacentHTML('beforeend', tplSettingsButton());
         }
     };
     Settings.prototype.setupModal = function (_a) {
         var gamedatas = _a.gamedatas;
         this.modal = new Modal("settings_modal", {
-            class: "settings_modal",
-            closeIcon: "fa-times",
+            class: 'settings_modal',
+            closeIcon: 'fa-times',
             titleTpl: '<h2 id="popin_${id}_title" class="${class}_title">${title}</h2>',
-            title: _("Settings"),
+            title: _('Settings'),
             contents: tplSettingsModalContent({
                 tabs: this.tabs,
             }),
-            closeAction: "hide",
-            verticalAlign: "flex-start",
+            closeAction: 'hide',
+            verticalAlign: 'flex-start',
             breakpoint: 740,
         });
     };
@@ -2952,10 +3024,10 @@ var Settings = (function () {
         this.setupModal({ gamedatas: gamedatas });
         this.setupModalContent();
         this.changeTab({ id: this.selectedTab });
-        dojo.connect($("show_settings"), "onclick", function () { return _this.open(); });
+        dojo.connect($("show_settings"), 'onclick', function () { return _this.open(); });
         this.tabs.forEach(function (_a) {
             var id = _a.id;
-            dojo.connect($("settings_modal_tab_".concat(id)), "onclick", function () {
+            dojo.connect($("settings_modal_tab_".concat(id)), 'onclick', function () {
                 return _this.changeTab({ id: id });
             });
         });
@@ -2963,13 +3035,13 @@ var Settings = (function () {
     Settings.prototype.setupModalContent = function () {
         var _this = this;
         var config = getSettingsConfig();
-        var node = document.getElementById("setting_modal_content");
+        var node = document.getElementById('setting_modal_content');
         if (!node) {
             return;
         }
         Object.entries(config).forEach(function (_a) {
             var tabId = _a[0], tabConfig = _a[1];
-            node.insertAdjacentHTML("beforeend", tplSettingsModalTabContent({ id: tabId }));
+            node.insertAdjacentHTML('beforeend', tplSettingsModalTabContent({ id: tabId }));
             var tabContentNode = document.getElementById("settings_modal_tab_content_".concat(tabId));
             if (!tabContentNode) {
                 return;
@@ -2982,33 +3054,33 @@ var Settings = (function () {
                 if (setting.onChangeInSetup && localValue && _this[methodName]) {
                     _this[methodName](localValue);
                 }
-                if (setting.type === "select") {
+                if (setting.type === 'select') {
                     var visible = !visibleCondition ||
                         (visibleCondition &&
                             visibleCondition.values.includes(_this.settings[visibleCondition.id]));
-                    tabContentNode.insertAdjacentHTML("beforeend", tplPlayerPrefenceSelectRow({
+                    tabContentNode.insertAdjacentHTML('beforeend', tplPlayerPrefenceSelectRow({
                         setting: setting,
                         currentValue: _this.settings[setting.id],
                         visible: visible,
                     }));
                     var controlId_1 = "setting_".concat(setting.id);
-                    $(controlId_1).addEventListener("change", function () {
+                    $(controlId_1).addEventListener('change', function () {
                         var value = $(controlId_1).value;
                         _this.changeSetting({ id: setting.id, value: value });
                     });
                 }
-                else if (setting.type === "slider") {
+                else if (setting.type === 'slider') {
                     var visible = !visibleCondition ||
                         (visibleCondition &&
                             visibleCondition.values.includes(_this.settings[visibleCondition.id]));
-                    tabContentNode.insertAdjacentHTML("beforeend", tplPlayerPrefenceSliderRow({
+                    tabContentNode.insertAdjacentHTML('beforeend', tplPlayerPrefenceSliderRow({
                         id: setting.id,
                         label: setting.label,
                         visible: visible,
                     }));
                     var sliderConfig = __assign(__assign({}, setting.sliderConfig), { start: _this.settings[setting.id] });
-                    noUiSlider.create($("setting_" + setting.id), sliderConfig);
-                    $("setting_" + setting.id).noUiSlider.on("slide", function (arg) {
+                    noUiSlider.create($('setting_' + setting.id), sliderConfig);
+                    $('setting_' + setting.id).noUiSlider.on('slide', function (arg) {
                         return _this.changeSetting({ id: setting.id, value: arg[0] });
                     });
                 }
@@ -3027,27 +3099,27 @@ var Settings = (function () {
     };
     Settings.prototype.onChangeTwoColumnLayoutSetting = function (value) {
         this.checkColumnSizesVisisble();
-        var node = document.getElementById("play-area-container");
+        var node = document.getElementById('play-area-container');
         if (node) {
-            node.setAttribute("data-two-columns", value);
+            node.setAttribute('data-two-columns', value);
         }
         this.game.updateLayout();
     };
     Settings.prototype.onChangeColumnSizesSetting = function (value) {
         this.game.updateLayout();
     };
-    Settings.prototype.onChangeSingleColumnMapSizeSetting = function (value) {
+    Settings.prototype.onChangeTileSizeSetting = function (value) {
         this.game.updateLayout();
     };
     Settings.prototype.onChangeCardSizeSetting = function (value) {
     };
     Settings.prototype.onChangeCardSizeInLogSetting = function (value) {
         var ROOT = document.documentElement;
-        ROOT.style.setProperty("--logCardScale", "".concat(Number(value) / 100));
+        ROOT.style.setProperty('--logCardScale', "".concat(Number(value) / 100));
     };
     Settings.prototype.onChangeAnimationSpeedSetting = function (value) {
         var duration = 2100 - value;
-        debug("onChangeAnimationSpeedSetting", duration);
+        debug('onChangeAnimationSpeedSetting', duration);
         this.game.animationManager.getSettings().duration = duration;
     };
     Settings.prototype.onChangeShowAnimationsSetting = function (value) {
@@ -3066,43 +3138,43 @@ var Settings = (function () {
         var id = _a.id;
         var currentTab = document.getElementById("settings_modal_tab_".concat(this.selectedTab));
         var currentTabContent = document.getElementById("settings_modal_tab_content_".concat(this.selectedTab));
-        currentTab.removeAttribute("data-state");
+        currentTab.removeAttribute('data-state');
         if (currentTabContent) {
-            currentTabContent.style.display = "none";
+            currentTabContent.style.display = 'none';
         }
         this.selectedTab = id;
         var tab = document.getElementById("settings_modal_tab_".concat(id));
         var tabContent = document.getElementById("settings_modal_tab_content_".concat(this.selectedTab));
-        tab.setAttribute("data-state", "selected");
+        tab.setAttribute('data-state', 'selected');
         if (tabContent) {
-            tabContent.style.display = "";
+            tabContent.style.display = '';
         }
     };
     Settings.prototype.checkAnmimationSpeedVisisble = function () {
-        var sliderNode = document.getElementById("setting_row_animationSpeed");
+        var sliderNode = document.getElementById('setting_row_animationSpeed');
         if (!sliderNode) {
             return;
         }
         if (this.settings[PREF_SHOW_ANIMATIONS] === PREF_ENABLED) {
-            sliderNode.style.display = "";
+            sliderNode.style.display = '';
         }
         else {
-            sliderNode.style.display = "none";
+            sliderNode.style.display = 'none';
         }
     };
     Settings.prototype.checkColumnSizesVisisble = function () {
-        var sliderNode = document.getElementById("setting_row_columnSizes");
-        var mapSizeSliderNode = document.getElementById("setting_row_singleColumnMapSize");
+        var sliderNode = document.getElementById('setting_row_columnSizes');
+        var mapSizeSliderNode = document.getElementById('setting_row_singleColumnMapSize');
         if (!(sliderNode && mapSizeSliderNode)) {
             return;
         }
-        if (this.settings["twoColumnsLayout"] === PREF_ENABLED) {
-            sliderNode.style.display = "";
-            mapSizeSliderNode.style.display = "none";
+        if (this.settings['twoColumnsLayout'] === PREF_ENABLED) {
+            sliderNode.style.display = '';
+            mapSizeSliderNode.style.display = 'none';
         }
         else {
-            sliderNode.style.display = "none";
-            mapSizeSliderNode.style.display = "";
+            sliderNode.style.display = 'none';
+            mapSizeSliderNode.style.display = '';
         }
     };
     Settings.prototype.getMethodName = function (_a) {
@@ -3118,7 +3190,8 @@ var Settings = (function () {
     };
     Settings.prototype.getLocalStorageKey = function (_a) {
         var id = _a.id;
-        return "".concat(this.game.framework().game_name, "-").concat(this.getSuffix({ id: id }));
+        var key = "".concat(this.game.framework().game_name, "-").concat(this.getSuffix({ id: id }));
+        return key;
     };
     Settings.prototype.open = function () {
         this.modal.show();
@@ -3363,6 +3436,8 @@ var FoxOnTheTree = (function () {
             ConfirmPartialTurn: ConfirmPartialTurn,
             ConfirmTurn: ConfirmTurn,
             TakeAction: TakeAction,
+            UseActionToken: UseActionToken,
+            Escape: Escape,
         };
         console.log('FoxOnTheTree constructor');
     }
@@ -3395,6 +3470,7 @@ var FoxOnTheTree = (function () {
         PlayerManager.create(this);
         NotificationManager.create(this);
         Board.create(this);
+        Tokens.create(this);
         NotificationManager.getInstance().setupNotifications();
         debug('Ending game setup');
     };
@@ -3535,32 +3611,13 @@ var FoxOnTheTree = (function () {
         if (!Settings.getInstance()) {
             return;
         }
-        $('play-area-container').setAttribute('data-two-columns', settings.get(PREF_TWO_COLUMN_LAYOUT));
         var ROOT = document.documentElement;
-        var WIDTH = $('play-area-container').getBoundingClientRect()['width'] - 8;
+        var WIDTH = $('play-area-container').getBoundingClientRect()['width'];
         var LEFT_COLUMN = 2080;
-        var RIGHT_COLUMN = 1000;
-        if (settings.get(PREF_TWO_COLUMN_LAYOUT) === PREF_ENABLED) {
-            WIDTH = WIDTH - 8;
-            var size = Number(settings.get(PREF_COLUMN_SIZES));
-            var proportions = [size, 100 - size];
-            var LEFT_SIZE = (proportions[0] * WIDTH) / 100;
-            var leftColumnScale = LEFT_SIZE / LEFT_COLUMN;
-            ROOT.style.setProperty('--leftColumnScale', "".concat(leftColumnScale));
-            ROOT.style.setProperty('--mapSizeMultiplier', '1');
-            var RIGHT_SIZE = (proportions[1] * WIDTH) / 100;
-            var rightColumnScale = RIGHT_SIZE / RIGHT_COLUMN;
-            ROOT.style.setProperty('--rightColumnScale', "".concat(rightColumnScale));
-            $('play-area-container').style.gridTemplateColumns = "".concat(LEFT_SIZE, "px ").concat(RIGHT_SIZE, "px");
-        }
-        else {
-            var LEFT_SIZE = WIDTH;
-            var leftColumnScale = LEFT_SIZE / LEFT_COLUMN;
-            ROOT.style.setProperty('--leftColumnScale', "".concat(leftColumnScale));
-            var RIGHT_SIZE = WIDTH;
-            var rightColumnScale = RIGHT_SIZE / RIGHT_COLUMN;
-            ROOT.style.setProperty('--rightColumnScale', "".concat(rightColumnScale));
-        }
+        var LEFT_SIZE = WIDTH;
+        var leftColumnScale = LEFT_SIZE / LEFT_COLUMN;
+        ROOT.style.setProperty('--leftColumnScale', "".concat(leftColumnScale));
+        ROOT.style.setProperty('--tileSizeMultiplier', "".concat(Number(settings.get(PREF_TILE_SIZE)) / 100));
     };
     FoxOnTheTree.prototype.onAddingNewUndoableStepToLog = function (notif) {
         var _this = this;
@@ -3707,25 +3764,67 @@ var Board = (function () {
     };
     Board.prototype.setup = function (gamedatas) {
         document
-            .getElementById('left-column')
+            .getElementById('play-area-container')
             .insertAdjacentHTML('afterbegin', tplBoard(gamedatas));
         this.ui = {
             containers: {
                 board: document.getElementById('fott-board'),
                 selectBoxes: document.getElementById('fott-select-boxes'),
+                tiles: {},
+                setAsideStandees: document.getElementById('fott-set-aside-standees'),
+                pointsTracker: document.getElementById('fott-points-tracker'),
             },
+            animals: {},
             selectBoxes: {},
         };
+        this.setupTiles();
         this.setupSelectBoxes();
+        this.setupAnimals(gamedatas);
+    };
+    Board.prototype.setupTiles = function () {
+        var _this = this;
+        TILES.forEach(function (tileId) {
+            _this.ui.containers.tiles[tileId] = document.getElementById(tileId);
+        });
+    };
+    Board.prototype.setupAnimals = function (gamedatas) {
+        var _this = this;
+        Object.values(gamedatas.animals).forEach(function (_a) {
+            var id = _a.id, type = _a.type;
+            var elt = (_this.ui.animals[id] = document.createElement('div'));
+            elt.classList.add('fott-animal');
+            elt.dataset.animal = id;
+            elt.dataset.type = type;
+            elt.dataset.phase = gamedatas.phase + '';
+        });
+        this.updateAnimals(gamedatas);
     };
     Board.prototype.setupSelectBoxes = function () { };
+    Board.prototype.updateAnimals = function (gamedatas) {
+        var _this = this;
+        Object.entries(gamedatas.animals).forEach(function (_a) {
+            var id = _a[0], animal = _a[1];
+            if (TILES.includes(animal.location)) {
+                _this.ui.containers.tiles[animal.location].appendChild(_this.ui.animals[id]);
+            }
+            else if (animal.location === SET_ASIDE_STANDEES) {
+                _this.ui.containers.setAsideStandees.appendChild(_this.ui.animals[id]);
+            }
+            else if (animal.location.startsWith('points')) {
+                _this.ui.containers.pointsTracker.appendChild(_this.ui.animals[id]);
+            }
+        });
+    };
     return Board;
 }());
-var tplBoard = function (gamedatas) { return "<div id=\"fott-board\">\n  <div id=\"fott-tiles\">\n    <div class=\"fott-tile\" data-tile-id=\"Tile01\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile02\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile03\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile04\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile05\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile06\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile07\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile08\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile09\"></div>\n    <div class=\"fott-tile\" data-tile-id=\"Tile10\"></div>\n  </div>\n  <div id=\"fott-select-boxes\"></div>\n</div>"; };
+var tplBoard = function (gamedatas) { return "<div id=\"fott-board\">\n  <div id=\"fott-tiles\">\n    <div id=\"Farm\" class=\"fott-tile\" data-tile-id=\"Farm\"></div>  \n    <div id=\"Tile01\" class=\"fott-tile\" data-tile-id=\"Tile01\"></div>\n    <div id=\"Tile02\" class=\"fott-tile\" data-tile-id=\"Tile02\"></div>\n    <div id=\"Tile03\" class=\"fott-tile\" data-tile-id=\"Tile03\"></div>\n    <div id=\"Tile04\" class=\"fott-tile\" data-tile-id=\"Tile04\"></div>\n    <div id=\"Tile05\" class=\"fott-tile\" data-tile-id=\"Tile05\"></div>\n    <div id=\"Tile06\" class=\"fott-tile\" data-tile-id=\"Tile06\"></div>\n    <div id=\"Tile07\" class=\"fott-tile\" data-tile-id=\"Tile07\"></div>\n    <div id=\"Tile08\" class=\"fott-tile\" data-tile-id=\"Tile08\"></div>\n    <div id=\"LairOfPredators\" class=\"fott-tile\" data-tile-id=\"LairOfPredators\"></div>\n  </div>\n  <div id=\"fott-select-boxes\"></div>\n  <div id=\"fott-set-aside-standees\"></div>\n  <div id=\"fott-points-tracker\"></div>\n</div>"; };
 var LOG_TOKEN_BOLD_TEXT = 'boldText';
 var LOG_TOKEN_BOLD_ITALIC_TEXT = 'boldItalicText';
 var LOG_TOKEN_NEW_LINE = 'newLine';
 var LOG_TOKEN_PLAYER_NAME = 'playerName';
+var LOG_TOKEN_ANIMAL = 'animal';
+var LOG_TOKEN_ACTION_TOKEN = 'actionToken';
+var LOG_TOKEN_TILE = 'tile';
 var CLASS_LOG_TOKEN = 'log-token';
 var tooltipIdCounter = 0;
 var getTokenDiv = function (_a) {
@@ -3747,6 +3846,12 @@ var getTokenDiv = function (_a) {
                     color: player.getColor(),
                 })
                 : value;
+        case LOG_TOKEN_ANIMAL:
+            return tplLogTokenAnimal(value);
+        case LOG_TOKEN_ACTION_TOKEN:
+            return tplLogTokenActionToken(value);
+        case LOG_TOKEN_TILE:
+            return tplLogTokenTile(value);
         default:
             return value;
     }
@@ -3758,6 +3863,15 @@ var tlpLogTokenText = function (_a) {
 var tplLogTokenPlayerName = function (_a) {
     var name = _a.name, color = _a.color;
     return "<span class=\"playername\" style=\"color:#".concat(color, ";\">").concat(name, "</span>");
+};
+var tplLogTokenAnimal = function (animal) {
+    return "<div class=\"log-token fott-animal\" data-animal=\"".concat(animal, "\" data-phase=\"1\"></div>");
+};
+var tplLogTokenActionToken = function (type) {
+    return "<div class=\"log-token fott-action-token\" data-type=\"".concat(type, "\"></div>");
+};
+var tplLogTokenTile = function (tile) {
+    return "<div class=\"log-token fott-tile\" data-tile-id=\"".concat(tile, "\"></div>");
 };
 var PlayerManager = (function () {
     function PlayerManager(game) {
@@ -3835,10 +3949,19 @@ var FottPlayer = (function () {
         if (!node) {
             return;
         }
+        node.insertAdjacentHTML('afterbegin', tplPlayerPanelInfo(this.playerId));
         this.updatePlayerPanel(gamedatas);
     };
     FottPlayer.prototype.updatePlayerBoard = function (playerGamedatas) { };
-    FottPlayer.prototype.updatePlayerPanel = function (gamedatas) { };
+    FottPlayer.prototype.updatePlayerPanel = function (gamedatas) {
+        var card = gamedatas.players[this.playerId].card;
+        if (card) {
+            var node = document.getElementById("card_".concat(this.playerId));
+            if (node) {
+                node.insertAdjacentHTML('afterbegin', tplCard(card.id));
+            }
+        }
+    };
     FottPlayer.prototype.getColor = function () {
         return this.playerColor;
     };
@@ -3850,10 +3973,10 @@ var FottPlayer = (function () {
     };
     return FottPlayer;
 }());
-var tplPlayerCounters = function (_a) {
-    var playerId = _a.playerId;
-    return "\n<div id=\"fott-counters-".concat(playerId, "-row-1\" class=\"fott-counters-row\">\n\n</div>\n\n");
+var tplPlayerPanelInfo = function (playerId) {
+    return "\n<div id=\"actionTokens_".concat(playerId, "\" class=\"fott-player-action-tokens\">\n\n</div>\n<div id=\"card_").concat(playerId, "\" class=\"fott-player-card\"></div>\n");
 };
+var tplCard = function (cardId) { return "<div class=\"fott-card\" data-card-id=\"".concat(cardId, "\"></div>"); };
 var TakeAction = (function () {
     function TakeAction(game) {
         this.game = game;
@@ -3874,22 +3997,371 @@ var TakeAction = (function () {
     };
     TakeAction.prototype.setDescription = function (activePlayerIds, args) { };
     TakeAction.prototype.updateInterfaceInitialStep = function () {
+        var _this = this;
         this.game.clearPossible();
-        updatePageTitle(_('${you} must take an action'), {});
+        this.updatePageTitle();
+        var board = Board.getInstance();
+        var tokens = Tokens.getInstance();
+        if (this.canMoveAnimal()) {
+            addPrimaryActionButton({
+                id: 'move_btn',
+                text: _('Move an animal'),
+                callback: function () { return _this.updateInterfaceSelectAnimalToMove(); },
+            });
+        }
+        if (this.canSwampRescue()) {
+            addPrimaryActionButton({
+                id: 'rescue_btn',
+                text: formatStringRecursive(_('Perform a swamp rescue'), {}),
+                callback: function () { return _this.updateInterfaceSelectSwampToken(); },
+            });
+        }
+        Object.values(this.args.animals).forEach(function (moveOptions) {
+            var animal = moveOptions.animal;
+            onClick(board.ui.animals[animal.id], function () {
+                _this.updateInterfaceSelectTile(moveOptions);
+            });
+        });
+        this.args.swampTokens.forEach(function (token) {
+            onClick(tokens.ui.actionTokens[token.id], function () {
+                _this.updateInterfaceConfirmSwampRescue(token);
+            });
+        });
         addUndoButtons(this.args);
     };
-    TakeAction.prototype.updateInterfaceConfirm = function (action, target) {
+    TakeAction.prototype.updateInterfaceSelectAnimalToMove = function () {
+        var _this = this;
+        this.game.clearPossible();
+        updatePageTitle(_('${you} must choose an animal to move'), {});
+        Object.entries(this.args.animals).forEach(function (_a) {
+            var animalId = _a[0], moveOptions = _a[1];
+            addSecondaryActionButton({
+                id: "move-".concat(animalId, "-btn"),
+                text: formatStringRecursive(_('Move ${tkn_animal}'), {
+                    tkn_animal: animalId,
+                }),
+                callback: function () { return _this.updateInterfaceSelectTile(moveOptions); },
+            });
+        });
+        addCancelButton();
+    };
+    TakeAction.prototype.updateInterfaceSelectSwampToken = function () {
+        var _this = this;
+        this.game.clearPossible();
+        updatePageTitle(_('${you} must choose a ${tkn_actionToken} to remove'), {
+            tkn_actionToken: SWAMP,
+        });
+        this.args.swampTokens.forEach(function (token) {
+            onClick(Tokens.getInstance().ui.actionTokens[token.id], function () {
+                _this.updateInterfaceConfirmSwampRescue(token);
+            });
+        });
+        addCancelButton();
+    };
+    TakeAction.prototype.updateInterfaceSelectTile = function (moveOptions) {
+        var _this = this;
         clearPossible();
-        updatePageTitle(_('Confirm action'), {});
+        if (moveOptions.basic !== null && moveOptions.special.length === 0) {
+            this.updateInterfaceConfirmMove(moveOptions.animal, moveOptions.basic);
+            return;
+        }
+        if (moveOptions.basic !== null) {
+            onClick(moveOptions.basic, function () {
+                _this.updateInterfaceConfirmMove(moveOptions.animal, moveOptions.basic);
+            });
+        }
+        moveOptions.special.forEach(function (tileId) {
+            if (tileId === moveOptions.basic) {
+                return;
+            }
+            onClick(tileId, function () {
+                _this.updateInterfaceConfirmMove(moveOptions.animal, tileId);
+            });
+        });
+        addCancelButton();
+    };
+    TakeAction.prototype.updateInterfaceConfirmMove = function (animal, tileId) {
+        clearPossible();
+        updatePageTitle(_('Move ${tkn_animal} to ${tkn_tile} ?'), {
+            tkn_animal: animal.id,
+            tkn_tile: tileId,
+        });
+        setSelected(tileId);
+        var callback = function () {
+            return performAction('actTakeAction', {
+                actionType: MOVE,
+                animalId: animal.id,
+                tileId: tileId,
+                actionTokenId: null,
+            });
+        };
+        if (Settings.getInstance().get(PREF_CONFIRM_END_OF_TURN_AND_PLAYER_SWITCH_ONLY) === PREF_ENABLED) {
+            callback();
+        }
+        else {
+            addConfirmButton(callback);
+        }
+        addCancelButton();
+    };
+    TakeAction.prototype.updateInterfaceConfirmSwampRescue = function (actionToken) {
+        clearPossible();
+        updatePageTitle(_('Remove ${tkn_actionToken} from ${tkn_tile} ?'), {
+            tkn_actionToken: actionToken.type,
+            tkn_tile: actionToken.location,
+        });
+        setSelected(Tokens.getInstance().ui.actionTokens[actionToken.id]);
+        var callback = function () {
+            return performAction('actTakeAction', {
+                actionType: SWAMP_RESCUE,
+                animalId: null,
+                tileId: actionToken.location,
+                actionTokenId: actionToken.id,
+            });
+        };
+        if (Settings.getInstance().get(PREF_CONFIRM_END_OF_TURN_AND_PLAYER_SWITCH_ONLY) === PREF_ENABLED) {
+            callback();
+        }
+        else {
+            addConfirmButton(callback);
+        }
+        addCancelButton();
+    };
+    TakeAction.prototype.canMoveAnimal = function () {
+        return Object.keys(this.args.animals).length > 0;
+    };
+    TakeAction.prototype.canSwampRescue = function () {
+        return this.args.swampTokens.length > 0;
+    };
+    TakeAction.prototype.updatePageTitle = function () {
+        var canMoveAnimal = this.canMoveAnimal();
+        var canSwampRescue = this.canSwampRescue();
+        if (canMoveAnimal && canSwampRescue) {
+            updatePageTitle(_('${you} must move an animal or perform a Swamp Rescue'));
+        }
+        else if (canMoveAnimal) {
+            updatePageTitle(_('${you} must move an animal'));
+        }
+        else if (canSwampRescue) {
+            updatePageTitle(_('${you} must perform a Swamp Rescue'));
+        }
+    };
+    return TakeAction;
+}());
+var UseActionToken = (function () {
+    function UseActionToken(game) {
+        this.game = game;
+    }
+    UseActionToken.create = function (game) {
+        UseActionToken.instance = new UseActionToken(game);
+    };
+    UseActionToken.getInstance = function () {
+        return UseActionToken.instance;
+    };
+    UseActionToken.prototype.onEnteringState = function (args) {
+        debug('Entering UseActionToken state');
+        this.args = args;
+        this.updateInterfaceInitialStep();
+    };
+    UseActionToken.prototype.onLeavingState = function () {
+        debug('Leaving UseActionToken state');
+    };
+    UseActionToken.prototype.setDescription = function (activePlayerIds, args) { };
+    UseActionToken.prototype.updateInterfaceInitialStep = function () {
+        var _this = this;
+        clearPossible();
+        updatePageTitle(_('${you} may use an action token'), {});
+        ACTION_TOKENS.forEach(function (token) {
+            if (([BANANA, SWAMP].includes(token) &&
+                _this.args.options[token] &&
+                _this.args.options[token].length > 0) ||
+                (token === ESCAPE &&
+                    _this.args.options.Escape &&
+                    Object.keys(_this.args.options.Escape).length > 0)) {
+                addSecondaryActionButton({
+                    id: "".concat(token, "-btn"),
+                    text: formatStringRecursive(_('Use ${tkn_actionToken}'), {
+                        tkn_actionToken: token,
+                    }),
+                    callback: function () { return _this.updateInterfaceSelectOption(token); },
+                });
+            }
+        });
+        addSecondaryActionButton({
+            id: 'pass_btn',
+            text: _('Do not use'),
+            callback: function () {
+                performAction('actUseActionToken', {
+                    skip: true,
+                    tokenType: null,
+                    target: null,
+                });
+            },
+        });
+    };
+    UseActionToken.prototype.updateInterfaceSelectOption = function (tokenType) {
+        var _this = this;
+        clearPossible();
+        var board = Board.getInstance();
+        switch (tokenType) {
+            case BANANA:
+            case SWAMP:
+                updatePageTitle(_('${you} may select a Path tile to place ${tkn_actionToken}'), {
+                    tkn_actionToken: tokenType,
+                });
+                this.args.options[tokenType].forEach(function (target) {
+                    return onClick(target, function () {
+                        _this.updateInterfaceConfirm(tokenType, target);
+                    });
+                });
+                break;
+            case ESCAPE:
+                updatePageTitle(_('${you} may select an animal to return to their starting tile'), {
+                    tkn_actionToken: tokenType,
+                });
+                Object.keys(this.args.options[ESCAPE]).forEach(function (target) {
+                    return onClick(board.ui.animals[target], function () {
+                        _this.updateInterfaceConfirm(tokenType, target);
+                    });
+                });
+                break;
+        }
+        addCancelButton();
+    };
+    UseActionToken.prototype.updateInterfaceConfirm = function (type, target) {
+        clearPossible();
+        switch (type) {
+            case BANANA:
+            case SWAMP:
+                updatePageTitle(_('Place ${tkn_actionToken} on ${tkn_tile} ?'), {
+                    tkn_actionToken: type,
+                    tkn_tile: target,
+                });
+                break;
+            case ESCAPE:
+                updatePageTitle(_('Use ${tkn_actionToken} to return ${tkn_animal} to ${tkn_tile} ?'), {
+                    tkn_actionToken: type,
+                    tkn_animal: target,
+                    tkn_tile: this.args.options.Escape[target],
+                });
+                break;
+        }
+        setSelected(target);
         addConfirmButton(function () {
-            performAction('actTakeAction', {
-                takenAction: action,
+            performAction('actUseActionToken', {
+                skip: false,
+                tokenType: type,
                 target: target,
             });
         });
         addCancelButton();
     };
-    return TakeAction;
+    return UseActionToken;
+}());
+var Escape = (function () {
+    function Escape(game) {
+        this.game = game;
+    }
+    Escape.create = function (game) {
+        Escape.instance = new Escape(game);
+    };
+    Escape.getInstance = function () {
+        return Escape.instance;
+    };
+    Escape.prototype.onEnteringState = function (args) {
+        debug('Entering Escape state');
+        this.args = args;
+        this.updateInterfaceInitialStep();
+    };
+    Escape.prototype.onLeavingState = function () {
+        debug('Leaving Escape state');
+    };
+    Escape.prototype.setDescription = function (activePlayerIds, args) {
+        updatePageTitle(_('Other players may use ${tkn_actionToken}'), {
+            tkn_actionToken: ESCAPE,
+        }, true);
+    };
+    Escape.prototype.updateInterfaceInitialStep = function () {
+        this.game.clearPossible();
+        if (Object.keys(this.args.options).length > 1) {
+            this.updateInterfaceSelectAnimal();
+            return;
+        }
+        var animalId = Object.entries(this.args.options)[0][0];
+        var tileId = Object.entries(this.args.options)[0][1];
+        updatePageTitle(_('${you} may use ${tkn_actionToken} to return ${tkn_animal} to ${tkn_tile}'), {
+            tkn_actionToken: ESCAPE,
+            tkn_animal: animalId,
+            tkn_tile: tileId,
+        });
+        addPrimaryActionButton({
+            id: 'use_btn',
+            text: formatStringRecursive(_('Use ${tkn_actionToken}'), {
+                tkn_actionToken: ESCAPE,
+            }),
+            callback: function () {
+                performAction('actEscape', {
+                    animalId: animalId,
+                    skip: false,
+                });
+            },
+        });
+        addSecondaryActionButton({
+            id: 'do_not_use_btn',
+            text: formatStringRecursive(_('Do not use'), {
+                tkn_actionToken: ESCAPE,
+            }),
+            callback: function () {
+                performAction('actEscape', {
+                    animalId: null,
+                    skip: true,
+                });
+            },
+        });
+    };
+    Escape.prototype.updateInterfaceSelectAnimal = function () {
+        var _this = this;
+        clearPossible();
+        updatePageTitle(_('${you} may select an animal to rescure with ${tkn_actionToken}'), {
+            tkn_actionToken: ESCAPE,
+        });
+        var board = Board.getInstance();
+        Object.entries(this.args.options).forEach(function (_a) {
+            var animalId = _a[0], tileId = _a[1];
+            onClick(board.ui.animals[animalId], function () {
+                _this.updateInterfaceConfirm(animalId);
+            });
+        });
+        addSecondaryActionButton({
+            id: 'do_not_use_btn',
+            text: formatStringRecursive(_('Do not use ${tkn_actionToken}'), {
+                tkn_actionToken: ESCAPE,
+            }),
+            callback: function () {
+                performAction('actEscape', {
+                    animalId: null,
+                    skip: true,
+                    tkn_actionToken: ESCAPE,
+                });
+            },
+        });
+    };
+    Escape.prototype.updateInterfaceConfirm = function (animalId) {
+        clearPossible();
+        var tileId = this.args.options[animalId];
+        updatePageTitle(_('Use ${tkn_actionToken} to return ${tkn_animal} to ${tkn_tile}'), {
+            tkn_actionToken: ESCAPE,
+            tkn_animal: animalId,
+            tkn_tile: tileId,
+        });
+        addConfirmButton(function () {
+            performAction('actEscape', {
+                animalId: animalId,
+                skip: false,
+            });
+        });
+        addCancelButton();
+    };
+    return Escape;
 }());
 var StaticData = (function () {
     function StaticData(game) {
@@ -3904,4 +4376,46 @@ var StaticData = (function () {
     };
     return StaticData;
 }());
-var tplPlayArea = function () { return "\n  <div id=\"play-area-container\">\n    <div id=\"left-column\"></div>\n    <div id=\"right-column\"></div>\n  </div>\n"; };
+var tplPlayArea = function () { return "\n  <div id=\"play-area-container\">\n    \n    \n  </div>\n"; };
+var Tokens = (function () {
+    function Tokens(game) {
+        this.game = game;
+        this.setup(game.gamedatas);
+    }
+    Tokens.create = function (game) {
+        Tokens.instance = new Tokens(game);
+    };
+    Tokens.getInstance = function () {
+        return Tokens.instance;
+    };
+    Tokens.prototype.setup = function (gamedatas) {
+        this.ui = {
+            actionTokens: {},
+        };
+        this.setupActionTokens(gamedatas);
+    };
+    Tokens.prototype.setupActionTokens = function (gamedatas) {
+        var _this = this;
+        var playerIs = PlayerManager.getInstance().getPlayerIds();
+        Object.values(gamedatas.actionTokens).forEach(function (_a) {
+            var id = _a.id, type = _a.type;
+            var elt = (_this.ui.actionTokens[id] = document.createElement('div'));
+            elt.classList.add('fott-action-token');
+            elt.dataset.type = type;
+        });
+        this.updateActionTokens(gamedatas);
+    };
+    Tokens.prototype.setupSelectBoxes = function () { };
+    Tokens.prototype.updateActionTokens = function (gamedatas) {
+        var _this = this;
+        Object.values(gamedatas.actionTokens).forEach(function (_a) {
+            var id = _a.id, location = _a.location;
+            var node = document.getElementById(location);
+            if (!node) {
+                return;
+            }
+            node.appendChild(_this.ui.actionTokens[id]);
+        });
+    };
+    return Tokens;
+}());

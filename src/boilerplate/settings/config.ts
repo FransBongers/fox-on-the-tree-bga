@@ -45,23 +45,23 @@ const getSettingsConfig = (): Record<string, PlayerPreferenceTab> => ({
   layout: {
     id: 'layout',
     config: {
-      twoColumnLayout: {
-        id: PREF_TWO_COLUMN_LAYOUT,
-        onChangeInSetup: true,
-        defaultValue: 'disabled',
-        label: _('Two column layout'),
-        type: 'select',
-        options: [
-          {
-            label: _('Enabled'),
-            value: 'enabled',
-          },
-          {
-            label: _('Disabled (single column)'),
-            value: 'disabled',
-          },
-        ],
-      },
+      // twoColumnLayout: {
+      //   id: PREF_TWO_COLUMN_LAYOUT,
+      //   onChangeInSetup: true,
+      //   defaultValue: 'disabled',
+      //   label: _('Two column layout'),
+      //   type: 'select',
+      //   options: [
+      //     {
+      //       label: _('Enabled'),
+      //       value: 'enabled',
+      //     },
+      //     {
+      //       label: _('Disabled (single column)'),
+      //       value: 'disabled',
+      //     },
+      //   ],
+      // },
       columnSizes: {
         id: PREF_COLUMN_SIZES,
         onChangeInSetup: true,
@@ -81,29 +81,10 @@ const getSettingsConfig = (): Record<string, PlayerPreferenceTab> => ({
         },
         type: 'slider',
       },
-      [PREF_SINGLE_COLUMN_MAP_SIZE]: {
-        id: PREF_SINGLE_COLUMN_MAP_SIZE,
+      [PREF_TILE_SIZE]: {
+        id: PREF_TILE_SIZE,
         onChangeInSetup: true,
-        label: _('Map size'),
-        defaultValue: 100,
-        visibleCondition: {
-          id: PREF_TWO_COLUMN_LAYOUT,
-          values: [DISABLED],
-        },
-        sliderConfig: {
-          step: 5,
-          padding: 0,
-          range: {
-            min: 30,
-            max: 100,
-          },
-        },
-        type: 'slider',
-      },
-      [PREF_CARD_SIZE]: {
-        id: PREF_CARD_SIZE,
-        onChangeInSetup: false,
-        label: _("Size of cards"),
+        label: _('Tile size'),
         defaultValue: 100,
         sliderConfig: {
           step: 5,
@@ -113,40 +94,55 @@ const getSettingsConfig = (): Record<string, PlayerPreferenceTab> => ({
             max: 200,
           },
         },
-        type: "slider",
-      },
-      [PREF_CARD_SIZE_IN_LOG]: {
-        id: PREF_CARD_SIZE_IN_LOG,
-        onChangeInSetup: true,
-        label: _('Size of cards in log'),
-        defaultValue: 0,
-        sliderConfig: {
-          step: 5,
-          padding: 0,
-          range: {
-            min: 0,
-            max: 140,
-          },
-        },
         type: 'slider',
       },
-      [PREF_CARD_INFO_IN_TOOLTIP]: {
-        id: PREF_CARD_INFO_IN_TOOLTIP,
-        onChangeInSetup: false,
-        defaultValue: PREF_ENABLED,
-        label: _('Show card info in tooltip'),
-        type: 'select',
-        options: [
-          {
-            label: _('Enabled'),
-            value: PREF_ENABLED,
-          },
-          {
-            label: _('Disabled (card image only)'),
-            value: PREF_DISABLED,
-          },
-        ],
-      },
+      // [PREF_CARD_SIZE]: {
+      //   id: PREF_CARD_SIZE,
+      //   onChangeInSetup: false,
+      //   label: _("Size of cards"),
+      //   defaultValue: 100,
+      //   sliderConfig: {
+      //     step: 5,
+      //     padding: 0,
+      //     range: {
+      //       min: 50,
+      //       max: 200,
+      //     },
+      //   },
+      //   type: "slider",
+      // },
+      // [PREF_CARD_SIZE_IN_LOG]: {
+      //   id: PREF_CARD_SIZE_IN_LOG,
+      //   onChangeInSetup: true,
+      //   label: _('Size of cards in log'),
+      //   defaultValue: 0,
+      //   sliderConfig: {
+      //     step: 5,
+      //     padding: 0,
+      //     range: {
+      //       min: 0,
+      //       max: 140,
+      //     },
+      //   },
+      //   type: 'slider',
+      // },
+      // [PREF_CARD_INFO_IN_TOOLTIP]: {
+      //   id: PREF_CARD_INFO_IN_TOOLTIP,
+      //   onChangeInSetup: false,
+      //   defaultValue: PREF_ENABLED,
+      //   label: _('Show card info in tooltip'),
+      //   type: 'select',
+      //   options: [
+      //     {
+      //       label: _('Enabled'),
+      //       value: PREF_ENABLED,
+      //     },
+      //     {
+      //       label: _('Disabled (card image only)'),
+      //       value: PREF_DISABLED,
+      //     },
+      //   ],
+      // },
     },
   },
   gameplay: {

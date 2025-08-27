@@ -254,6 +254,7 @@ body > .card {
   --tokenScale: var(--leftColumnScale);
   --cardScale: var(--boardScale);
   --iconScale: var(--boardScale);
+  --tileScale: var(--leftColumnScale) * var(--tileSizeMultiplier);
   min-width: 100%;
 }
 #fott-board #fott-tiles {
@@ -262,63 +263,154 @@ body > .card {
   flex-direction: row;
   gap: calc(var(--boardScale) * 8px);
   padding: calc(var(--boardScale) * 4px);
+  width: calc(var(--leftColumnScale) * 2080px);
 }
 
 .fott-tile {
-  width: calc(var(--boardScale) * 200px);
+  width: calc(var(--tileScale) * 200px);
   aspect-ratio: 502/501;
   background-image: url("img/tiles.jpg");
   background-size: 500% 200%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.fott-tile.selectable {
+  cursor: pointer;
+  outline: solid calc(var(--tileScale) * 4px) yellow;
+}
+
+.fott-tile.selectable:hover,
+.fott-tile.selected {
+  cursor: pointer;
+  outline: solid calc(var(--tileScale) * 4px) blue;
+}
+
+#fott-points-tracker,
+#fott-set-aside-standees {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.fott-tile[data-tile-id=Farm] {
+  background-position-x: 0%;
+  background-position-y: 0%;
 }
 
 .fott-tile[data-tile-id=Tile01] {
-  background-position-x: 0%;
+  background-position-x: 25%;
   background-position-y: 0%;
 }
 
 .fott-tile[data-tile-id=Tile02] {
-  background-position-x: 25%;
+  background-position-x: 50%;
   background-position-y: 0%;
 }
 
 .fott-tile[data-tile-id=Tile03] {
-  background-position-x: 50%;
+  background-position-x: 75%;
   background-position-y: 0%;
 }
 
 .fott-tile[data-tile-id=Tile04] {
-  background-position-x: 75%;
+  background-position-x: 100%;
   background-position-y: 0%;
 }
 
 .fott-tile[data-tile-id=Tile05] {
-  background-position-x: 100%;
-  background-position-y: 0%;
-}
-
-.fott-tile[data-tile-id=Tile06] {
   background-position-x: 0%;
   background-position-y: 100%;
 }
 
-.fott-tile[data-tile-id=Tile07] {
+.fott-tile[data-tile-id=Tile06] {
   background-position-x: 25%;
   background-position-y: 100%;
 }
 
-.fott-tile[data-tile-id=Tile08] {
+.fott-tile[data-tile-id=Tile07] {
   background-position-x: 50%;
   background-position-y: 100%;
 }
 
-.fott-tile[data-tile-id=Tile09] {
+.fott-tile[data-tile-id=Tile08] {
   background-position-x: 75%;
   background-position-y: 100%;
 }
 
-.fott-tile[data-tile-id=Tile10] {
+.fott-tile[data-tile-id=LairOfPredators] {
   background-position-x: 100%;
   background-position-y: 100%;
+}
+
+.fott-animal {
+  width: calc(var(--tokenScale) * 80px);
+  aspect-ratio: 375/400;
+  background-image: url("img/animals.png");
+  background-size: 400% 200%;
+  transition: tranform 1s;
+}
+
+.fott-animal[data-type=FarmAnimal][data-phase="1"] {
+  transform: scaleX(-1);
+}
+
+.fott-animal[data-type=Predator][data-phase="2"] {
+  transform: scaleX(-1);
+}
+
+.fott-animal[data-animal=Bear] {
+  background-position-x: 0%;
+  background-position-y: 0%;
+}
+
+.fott-animal[data-animal=Chicken] {
+  background-position-x: 33.3333333333%;
+  background-position-y: 0%;
+}
+
+.fott-animal[data-animal=Cow] {
+  background-position-x: 66.6666666667%;
+  background-position-y: 0%;
+}
+
+.fott-animal[data-animal=Fox] {
+  background-position-x: 100%;
+  background-position-y: 0%;
+}
+
+.fott-animal[data-animal=Goat] {
+  background-position-x: 0%;
+  background-position-y: 100%;
+}
+
+.fott-animal[data-animal=Pig] {
+  background-position-x: 33.3333333333%;
+  background-position-y: 100%;
+}
+
+.fott-animal[data-animal=Tiger] {
+  background-position-x: 66.6666666667%;
+  background-position-y: 100%;
+}
+
+.fott-animal[data-animal=Wolf] {
+  background-position-x: 100%;
+  background-position-y: 100%;
+}
+
+.fott-animal.selectable {
+  cursor: pointer;
+  filter: drop-shadow(2px 0px 0px yellow) drop-shadow(-2px 0px 0px yellow) drop-shadow(0px 2px 0px yellow) drop-shadow(0px -2px 0px yellow);
+}
+
+.fott-animal.selectable:hover,
+.fott-animal.selected {
+  cursor: pointer;
+  filter: drop-shadow(2px 0px 0px blue) drop-shadow(-2px 0px 0px blue) drop-shadow(0px 2px 0px blue) drop-shadow(0px -2px 0px blue);
 }
 
 #info-panel {
@@ -908,21 +1000,81 @@ span[style*="color:#fcd873"] {
 }
 
 .player-board-game-specific-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: auto;
-  grid-gap: 8px;
-  grid-row-gap: 8px;
   --iconScale: 1;
-  padding-top: 8px;
+  --cardScale: 1;
+  --tokenScale: 1;
 }
 
-.fott-counters-row {
+.fott-player-action-tokens {
   width: 100%;
   display: grid;
   grid-template: 48px auto/repeat(4, 48px);
   justify-content: space-evenly;
   gap: 4px;
+}
+
+.fott-player-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 4px 0px;
+}
+
+.fott-card {
+  width: calc(var(--cardScale) * 220px);
+  aspect-ratio: 502/359;
+  background-image: url("img/cards.jpg");
+  background-size: 500% 200%;
+}
+
+.fott-card[data-card-id=Card01] {
+  background-position-x: 0%;
+  background-position-y: 0%;
+}
+
+.fott-card[data-card-id=Card02] {
+  background-position-x: 25%;
+  background-position-y: 0%;
+}
+
+.fott-card[data-card-id=Card03] {
+  background-position-x: 50%;
+  background-position-y: 0%;
+}
+
+.fott-card[data-card-id=Card04] {
+  background-position-x: 75%;
+  background-position-y: 0%;
+}
+
+.fott-card[data-card-id=Card05] {
+  background-position-x: 100%;
+  background-position-y: 0%;
+}
+
+.fott-card[data-card-id=Card06] {
+  background-position-x: 0%;
+  background-position-y: 100%;
+}
+
+.fott-card[data-card-id=Card07] {
+  background-position-x: 25%;
+  background-position-y: 100%;
+}
+
+.fott-card[data-card-id=Card08] {
+  background-position-x: 50%;
+  background-position-y: 100%;
+}
+
+.fott-card[data-card-id=Back] {
+  background-position-x: 75%;
+  background-position-y: 100%;
+}
+
+.fott-card[data-card-id=""] {
+  background-position-x: 100%;
+  background-position-y: 100%;
 }
 
 /* ------- UNDO TURN ------- */
@@ -1017,6 +1169,10 @@ span[style*="color:#c0c0c0"] {
 #customActions {
   --iconScale: 0.75;
   --tokenScale: 0.6;
+  --tileScale: 0.25;
+}
+#customActions .fott-action-token {
+  --tokenScale: 1;
 }
 
 #pagemaintitletext,
@@ -1024,12 +1180,22 @@ span[style*="color:#c0c0c0"] {
   --tokenScale: 0.6;
   --iconScale: 0.7;
   --cardScale: 0;
+  --tileScale: 0.25;
+}
+#pagemaintitletext .fott-action-token,
+#gameaction_status .fott-action-token {
+  --tokenScale: 0.8;
+}
+#pagemaintitletext .fott-tile,
+#gameaction_status .fott-tile {
+  border: solid calc(var(--tileScale) * 2px) black;
 }
 
 .log > .roundedbox,
 .log > .roundedboxinner {
   --tokenScale: 0.6;
   --iconScale: 0.7;
+  --tileScale: 0.25;
 }
 
 .notif_phase .roundedboxinner,
@@ -1043,28 +1209,45 @@ span[style*="color:#c0c0c0"] {
   border-bottom: 1px solid black;
 }
 
+.fott-action-token {
+  width: calc(var(--tokenScale) * 48px);
+  aspect-ratio: 402/432;
+  background-image: url("img/tokens.png");
+  background-size: 300% 100%;
+}
+
+.fott-action-token[data-type=Banana] {
+  background-position-x: 0%;
+}
+
+.fott-action-token[data-type=Escape] {
+  background-position-x: 50%;
+}
+
+.fott-action-token[data-type=Swamp] {
+  background-position-x: 100%;
+}
+
+.fott-action-token.selectable {
+  cursor: pointer;
+  filter: drop-shadow(2px 0px 0px yellow) drop-shadow(-2px 0px 0px yellow) drop-shadow(0px 2px 0px yellow) drop-shadow(0px -2px 0px yellow);
+}
+
+.fott-action-token.selectable:hover,
+.fott-action-token.selected {
+  cursor: pointer;
+  filter: drop-shadow(2px 0px 0px blue) drop-shadow(-2px 0px 0px blue) drop-shadow(0px 2px 0px blue) drop-shadow(0px -2px 0px blue);
+}
+
 html {
   background-attachment: fixed;
   background: rgb(12, 15, 44) !important;
 }
 
 #play-area-container {
-  padding: 4px;
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-gap: 8px;
-}
-
-#play-area-container[data-two-columns=disabled] {
   display: flex;
   flex-flow: column;
   align-items: center;
-}
-
-#right-column {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
 }
 
 /*# sourceMappingURL=foxonthetree.css.map */

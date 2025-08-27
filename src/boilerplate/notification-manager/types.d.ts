@@ -12,3 +12,28 @@ interface NotifWithPlayerArgs {
   playerId: number;
   player_name: string;
 }
+
+interface NotifDiscardActionToken extends NotifWithPlayerArgs {
+  actionToken: FottActionToken;
+}
+
+interface NotifMoveAnimal extends NotifWithPlayerArgs {
+  animal: FottAnimal;
+  tileId: string;
+}
+
+interface NotifPhase {
+  phase: string | number;
+}
+
+
+interface NotifPlaceActionToken extends NotifWithPlayerArgs {
+  actionToken: FottActionToken;
+  tileId: string;
+}
+
+interface NotifScorePoints {
+  animal: FottAnimal;
+  animalToken: FottAnimalToken | null;
+  phase: 1 | 2;
+}

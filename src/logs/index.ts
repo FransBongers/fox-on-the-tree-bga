@@ -3,6 +3,9 @@ const LOG_TOKEN_BOLD_ITALIC_TEXT = 'boldItalicText';
 const LOG_TOKEN_NEW_LINE = 'newLine';
 const LOG_TOKEN_PLAYER_NAME = 'playerName';
 // Game specific
+const LOG_TOKEN_ANIMAL = 'animal';
+const LOG_TOKEN_ACTION_TOKEN = 'actionToken';
+const LOG_TOKEN_TILE = 'tile';
 
 const CLASS_LOG_TOKEN = 'log-token';
 
@@ -20,6 +23,7 @@ const getTokenDiv = ({
   const splitKey = key.split('_');
   const type = splitKey[1];
   switch (type) {
+    // Generic
     case LOG_TOKEN_BOLD_TEXT:
       return tlpLogTokenText({ text: value });
     case LOG_TOKEN_BOLD_ITALIC_TEXT:
@@ -34,7 +38,13 @@ const getTokenDiv = ({
             color: player.getColor(),
           })
         : value;
-
+          // Game specific
+    case LOG_TOKEN_ANIMAL:
+      return tplLogTokenAnimal(value);
+    case LOG_TOKEN_ACTION_TOKEN:
+      return tplLogTokenActionToken(value);
+    case LOG_TOKEN_TILE:
+      return tplLogTokenTile(value);
     default:
       return value;
   }

@@ -103,6 +103,11 @@ span[style*='color:#c0c0c0'] {
 #customActions {
   --iconScale: 0.75;
   --tokenScale: 0.6;
+  --tileScale: 0.25;
+
+  .fott-action-token {
+    --tokenScale: 1;
+  }
 }
 
 #pagemaintitletext,
@@ -110,16 +115,22 @@ span[style*='color:#c0c0c0'] {
   --tokenScale: 0.6;
   --iconScale: 0.7;
   --cardScale: 0;
+  --tileScale: 0.25;
 
+  .fott-action-token {
+    --tokenScale: 0.8;
+  }
 
+  .fott-tile {
+    border: solid calc(var(--tileScale) * 2px) black;
+  }
 }
 
 .log > .roundedbox,
 .log > .roundedboxinner {
   --tokenScale: 0.6;
   --iconScale: 0.7;
-
-
+  --tileScale: 0.25;
 }
 
 .notif_phase {

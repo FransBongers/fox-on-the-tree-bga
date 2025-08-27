@@ -1,19 +1,58 @@
+@use '../base';
+@use 'sass:math';
+@use 'sass:map';
+
 .player-board-game-specific-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: auto;
-  // flex-direction: column;
-  grid-gap: 8px;
-  grid-row-gap: 8px;
+  // display: grid;
+  // grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  // grid-template-rows: auto;
+  // // flex-direction: column;
+  // grid-gap: 8px;
+  // grid-row-gap: 8px;
   --iconScale: 1;
-  // padding: 2px;
-  padding-top: 8px;
+  --cardScale: 1;
+  --tokenScale: 1;
+  // // padding: 2px;
+  // padding-top: 8px;
 }
 
-.fott-counters-row {
+.fott-player-action-tokens {
   width: 100%;
   display: grid;
   grid-template: 48px auto / repeat(4, 48px);
   justify-content: space-evenly;
   gap: 4px;
+}
+
+.fott-player-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 4px 0px;
+}
+
+.fott-card {
+  width: calc(var(--cardScale) * 220px);
+  aspect-ratio: 502 / 359;
+  background-image: url('img/cards.jpg');
+  background-size: 500% 200%;
+}
+
+$cards: (
+  1: 'Card01',
+  2: 'Card02',
+  3: 'Card03',
+  4: 'Card04',
+  5: 'Card05',
+  6: 'Card06',
+  7: 'Card07',
+  8: 'Card08',
+  9: 'Back',
+);
+
+@for $i from 1 through 10 {
+  .fott-card[data-card-id='#{map.get($cards,$i)}'] {
+    background-position-x: math.div((($i - 1) % 5 * 100%), 4);
+    background-position-y: math.div(math.floor(calc(($i - 1) / 5)) * 100%, 1);
+  }
 }

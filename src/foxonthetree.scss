@@ -17,7 +17,7 @@
 @use './player-manager/playerBoard';
 @use './player-manager/playerPanel';
 @use './logs/logs';
-@use './tokens';
+@use './tokens/tokens';
 
 html {
   // background-image: url('img/background.jpg');
@@ -26,24 +26,8 @@ html {
 }
 
 #play-area-container {
-  padding: 4px;
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-gap: 8px;
-}
-
-#play-area-container[data-two-columns='disabled'] {
   // padding: 4px; // Check this?
   display: flex;
   flex-flow: column;
   align-items: center;
-}
-
-#left-column {
-}
-
-#right-column {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
 }

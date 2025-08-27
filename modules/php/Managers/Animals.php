@@ -15,7 +15,10 @@ class Animals extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Pieces
 {
   protected static $table = 'animals';
   protected static $prefix = 'animal_';
-  protected static $customFields = [];
+  protected static $customFields = [
+    'points_phase_1',
+    'points_phase_2',
+  ];
   protected static $autoremovePrefix = false;
   protected static $autoreshuffle = false;
   protected static $autoIncrement = false;

@@ -24,7 +24,7 @@ class Globals extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\DB_Manager
     // Game options
 
     // Other
-
+    'phase' => 'int'
   ];
 
   protected static $table = 'global_variables';
@@ -148,5 +148,7 @@ class Globals extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\DB_Manager
   /*
    * Setup new game
    */
-  public static function setupNewGame($players, $options) {}
+  public static function setupNewGame($players, $options) {
+    self::setPhase(FIRST_PHASE);
+  }
 }

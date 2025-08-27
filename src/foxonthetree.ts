@@ -61,7 +61,8 @@ class FoxOnTheTree implements Game {
     ConfirmPartialTurn,
     ConfirmTurn,
     TakeAction,
-
+    UseActionToken,
+    Escape,
   };
 
   constructor() {
@@ -122,8 +123,9 @@ class FoxOnTheTree implements Game {
     Interaction.create(this);
     PlayerManager.create(this);
     NotificationManager.create(this);
-    
+
     Board.create(this);
+    Tokens.create(this);
 
     NotificationManager.getInstance().setupNotifications();
 
@@ -331,179 +333,6 @@ class FoxOnTheTree implements Game {
     }
   }
 
-  // addCancelButton(callback?: Function) {
-  //   this.addDangerActionButton({
-  //     id: 'cancel_btn',
-  //     text: _('Cancel'),
-  //     callback: () => {
-  //       if (callback) {
-  //         callback();
-  //       }
-  //       this.onCancel();
-  //     },
-  //   });
-  // }
-
-  // addConfirmButton(callback: Function) {
-  //   this.addPrimaryActionButton({
-  //     id: 'confirm_btn',
-  //     text: _('Confirm'),
-  //     callback,
-  //   });
-  // }
-
-  // addPassButton({
-  //   optionalAction,
-  //   text,
-  // }: {
-  //   optionalAction: boolean;
-  //   text?: string;
-  // }) {
-  //   if (optionalAction) {
-  //     this.addSecondaryActionButton({
-  //       id: 'pass_btn',
-  //       text: text ? _(text) : _('Pass'),
-  //       callback: () => {
-  //         // this.takeAction({
-  //         //   action: 'actPassOptionalAction',
-  //         //   atomicAction: false,
-  //         // });
-  //       },
-  //     });
-  //   }
-  // }
-
-  // addPlayerButton({
-  //   player,
-  //   callback,
-  // }: {
-  //   player: BgaPlayer;
-  //   callback: Function | string;
-  // }) {
-  //   const id = `select_${player.id}`;
-
-  //   this.addPrimaryActionButton({
-  //     id,
-  //     text: player.name,
-  //     callback,
-  //   });
-
-  //   const node = document.getElementById(id);
-  //   node.style.backgroundColor = `#${player.color}`;
-  // }
-
-  // addPrimaryActionButton({
-  //   id,
-  //   text,
-  //   callback,
-  //   extraClasses,
-  // }: {
-  //   id: string;
-  //   text: string;
-  //   callback: Function | string;
-  //   extraClasses?: string;
-  // }) {
-  //   if ($(id)) {
-  //     return;
-  //   }
-  //   this.framework().addActionButton(
-  //     id,
-  //     text,
-  //     callback,
-  //     'customActions',
-  //     false,
-  //     'blue'
-  //   );
-  //   if (extraClasses) {
-  //     dojo.addClass(id, extraClasses);
-  //   }
-  // }
-
-  // addSecondaryActionButton({
-  //   id,
-  //   text,
-  //   callback,
-  //   extraClasses,
-  // }: {
-  //   id: string;
-  //   text: string;
-  //   callback: Function | string;
-  //   extraClasses?: string;
-  // }) {
-  //   if ($(id)) {
-  //     return;
-  //   }
-  //   this.framework().addActionButton(
-  //     id,
-  //     text,
-  //     callback,
-  //     'customActions',
-  //     false,
-  //     'gray'
-  //   );
-  //   if (extraClasses) {
-  //     dojo.addClass(id, extraClasses);
-  //   }
-  // }
-
-  // addDangerActionButton({
-  //   id,
-  //   text,
-  //   callback,
-  //   extraClasses,
-  // }: {
-  //   id: string;
-  //   text: string;
-  //   callback: Function | string;
-  //   extraClasses?: string;
-  // }) {
-  //   if ($(id)) {
-  //     return;
-  //   }
-  //   this.framework().addActionButton(
-  //     id,
-  //     text,
-  //     callback,
-  //     'customActions',
-  //     false,
-  //     'red'
-  //   );
-  //   if (extraClasses) {
-  //     dojo.addClass(id, extraClasses);
-  //   }
-  // }
-
-  // addUndoButtons({ previousSteps, previousEngineChoices }: CommonStateArgs) {
-  //   const lastStep = Math.max(0, ...previousSteps);
-  //   if (lastStep > 0) {
-  //     // this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), () => this.undoToStep(lastStep), 'restartAction');
-  //     this.addDangerActionButton({
-  //       id: 'undo_last_step_btn',
-  //       text: _('Undo last step'),
-  //       callback: () => {
-  //         // this.takeAction({
-  //         //   action: 'actUndoToStep',
-  //         //   args: {
-  //         //     stepId: lastStep,
-  //         //   },
-  //         //   checkAction: 'actRestart',
-  //         //   atomicAction: false,
-  //         // });
-  //       },
-  //     });
-  //   }
-
-  //   if (previousEngineChoices > 0) {
-  //     this.addDangerActionButton({
-  //       id: 'restart_btn',
-  //       text: _('Restart turn'),
-  //       callback: () => {
-  //         // this.takeAction({ action: 'actRestart', atomicAction: false }),
-  //       },
-  //     });
-  //   }
-  // }
-
   public clearInterface() {
     //  this.playerManager.clearInterface();
     //  this.gameMap.clearInterface();
@@ -631,46 +460,52 @@ class FoxOnTheTree implements Game {
       return;
     }
 
-    $('play-area-container').setAttribute(
-      'data-two-columns',
-      settings.get(PREF_TWO_COLUMN_LAYOUT)
-    );
+    // $('play-area-container').setAttribute(
+    //   'data-two-columns',
+    //   settings.get(PREF_TWO_COLUMN_LAYOUT)
+    // );
 
     const ROOT = document.documentElement;
-    let WIDTH = $('play-area-container').getBoundingClientRect()['width'] - 8;
+    let WIDTH = $('play-area-container').getBoundingClientRect()['width'];
     const LEFT_COLUMN = 2080;
-    const RIGHT_COLUMN = 1000;
+    // const RIGHT_COLUMN = 1000;
 
-    if (settings.get(PREF_TWO_COLUMN_LAYOUT) === PREF_ENABLED) {
-      WIDTH = WIDTH - 8; // grid gap + padding
-      const size = Number(settings.get(PREF_COLUMN_SIZES));
-      const proportions = [size, 100 - size];
-      const LEFT_SIZE = (proportions[0] * WIDTH) / 100;
-      const leftColumnScale = LEFT_SIZE / LEFT_COLUMN;
-      ROOT.style.setProperty('--leftColumnScale', `${leftColumnScale}`);
-      ROOT.style.setProperty('--mapSizeMultiplier', '1');
-      const RIGHT_SIZE = (proportions[1] * WIDTH) / 100;
-      const rightColumnScale = RIGHT_SIZE / RIGHT_COLUMN;
-      ROOT.style.setProperty('--rightColumnScale', `${rightColumnScale}`);
+    // if (settings.get(PREF_TWO_COLUMN_LAYOUT) === PREF_ENABLED) {
+    //   WIDTH = WIDTH - 8; // grid gap + padding
+    //   const size = Number(settings.get(PREF_COLUMN_SIZES));
+    //   const proportions = [size, 100 - size];
+    //   const LEFT_SIZE = (proportions[0] * WIDTH) / 100;
+    //   const leftColumnScale = LEFT_SIZE / LEFT_COLUMN;
+    //   ROOT.style.setProperty('--leftColumnScale', `${leftColumnScale}`);
+    //   ROOT.style.setProperty('--mapSizeMultiplier', '1');
+    //   const RIGHT_SIZE = (proportions[1] * WIDTH) / 100;
+    //   const rightColumnScale = RIGHT_SIZE / RIGHT_COLUMN;
+    //   ROOT.style.setProperty('--rightColumnScale', `${rightColumnScale}`);
 
-      $(
-        'play-area-container'
-      ).style.gridTemplateColumns = `${LEFT_SIZE}px ${RIGHT_SIZE}px`;
-    } else {
-      const LEFT_SIZE = WIDTH;
-      const leftColumnScale = LEFT_SIZE / LEFT_COLUMN;
-      ROOT.style.setProperty('--leftColumnScale', `${leftColumnScale}`);
-      // ROOT.style.setProperty(
-      //   '--mapSizeMultiplier',
-      //   `${
-      //     Number(settings.get(PREF_SINGLE_COLUMN_MAP_SIZE)) / 100
-      //   }`
-      // );
-      const RIGHT_SIZE = WIDTH;
-      const rightColumnScale = RIGHT_SIZE / RIGHT_COLUMN;
-      ROOT.style.setProperty('--rightColumnScale', `${rightColumnScale}`);
-    }
+    //   $(
+    //     'play-area-container'
+    //   ).style.gridTemplateColumns = `${LEFT_SIZE}px ${RIGHT_SIZE}px`;
+    // } else {
+    const LEFT_SIZE = WIDTH;
+    const leftColumnScale = LEFT_SIZE / LEFT_COLUMN;
+    ROOT.style.setProperty('--leftColumnScale', `${leftColumnScale}`);
+
+    ROOT.style.setProperty(
+      '--tileSizeMultiplier',
+      `${Number(settings.get(PREF_TILE_SIZE)) / 100}`
+    );
+
+    // ROOT.style.setProperty(
+    //   '--mapSizeMultiplier',
+    //   `${
+    //     Number(settings.get(PREF_SINGLE_COLUMN_MAP_SIZE)) / 100
+    //   }`
+    // );
+    // const RIGHT_SIZE = WIDTH;
+    // const rightColumnScale = RIGHT_SIZE / RIGHT_COLUMN;
+    // ROOT.style.setProperty('--rightColumnScale', `${rightColumnScale}`);
   }
+  // }
 
   // .########.########.....###....##.....##.########.##......##..#######..########..##....##
   // .##.......##.....##...##.##...###...###.##.......##..##..##.##.....##.##.....##.##...##.

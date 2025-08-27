@@ -15,4 +15,9 @@ class Locations
   {
     return 'hand_' . $playerId;
   }
+
+  public static function points($number)
+  {
+    return 'points_' . $number;
+  }
 }

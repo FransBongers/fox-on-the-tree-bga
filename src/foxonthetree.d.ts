@@ -34,20 +34,45 @@ interface FoxOnTheTreeGamedatas extends Gamedatas {
   gameOptions: {};
   playerOrder: number[];
   players: Record<number, FoxOnTheTreePlayerData>;
-  staticData: {
-
-  };
+  staticData: {};
   // Game specific
- 
+  actionTokens: Record<string, FottActionToken>;
+  animals: Record<string, FottAnimal>;
+  phase: 1 | 2;
+}
+
+interface FottAnimal extends GamePiece {
+  type: 'FarmAnimal' | 'Predator';
+}
+
+interface FottAnimalToken extends GamePiece {}
+
+type ActionTokenType = 'Banana' | 'Escape' | 'Swamp';
+
+interface FottActionToken extends GamePiece {
+  type: ActionTokenType;
+}
+
+interface FottCard extends GamePiece {
+  favored: Array<
+    'Pig' | 'Cow' | 'Chicken' | 'Goat' | 'Wolf' | 'Fox' | 'Tiger' | 'Bear'
+  >;
+  unfavored:
+    | 'Pig'
+    | 'Cow'
+    | 'Chicken'
+    | 'Goat'
+    | 'Wolf'
+    | 'Fox'
+    | 'Tiger'
+    | 'Bear';
 }
 
 interface FoxOnTheTreePlayerData extends BgaPlayer {
-
+  card: FottCard | null;
 }
 
 type GameAlias = FoxOnTheTree;
 type GamedatasAlias = FoxOnTheTreeGamedatas;
 type PlayerAlias = FottPlayer;
 type PlayerDataAlias = FoxOnTheTreePlayerData;
-
-

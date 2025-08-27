@@ -62,7 +62,10 @@ class NotificationManager {
       'message',
       'phase',
       // Game specific
-
+      'discardActionToken',
+      'moveAnimal',
+      'placeActionToken',
+      'scorePoints',
     ];
 
     // example: https://github.com/thoun/knarr/blob/main/src/knarr.ts
@@ -108,9 +111,7 @@ class NotificationManager {
       this.game.framework().notifqueue.setSynchronous(notifName, undefined);
 
       // Setup notifs that need to be ignored
-      [
-
-      ].forEach((notifId) => {
+      [].forEach((notifId) => {
         this.game
           .framework()
           .notifqueue.setIgnoreNotificationCheck(
@@ -155,6 +156,65 @@ class NotificationManager {
     // Only here so messages get displayed in title bar
   }
 
-  async notif_phase(_notif: Notif<unknown>) {}
+  async notif_phase(notif: Notif<NotifPhase>) {
+    const { phase } = notif.args;
+    if (phase !== SECOND_PHASE) {
+      return;
+    }
+    const board = Board.getInstance();
+    Object.entries(board.ui.animals).forEach(([animalId, animalElt]) => {
+      animalElt.dataset.phase = '2';
+      const type = this.game.gamedatas.animals[animalId].type;
+      if (type === 'Predator') {
+        board.ui.containers.tiles[FARM].appendChild(animalElt);
+      } else {
+        board.ui.containers.tiles[LAIR_OF_PREDATORS].appendChild(animalElt);
+      }
+    });
+  }
 
+  async notif_discardActionToken(notif: Notif<NotifDiscardActionToken>) {
+    const { playerId, actionToken } = notif.args;
+    const tokenElt = Tokens.getInstance().ui.actionTokens[actionToken.id];
+
+    if (!tokenElt) {
+      return;
+    }
+
+    // Remove the token element from the DOM
+    tokenElt.remove();
+  }
+
+  async notif_moveAnimal(notif: Notif<NotifMoveAnimal>) {
+    const { playerId, animal, tileId } = notif.args;
+    const board = Board.getInstance();
+    const animalElt = board.ui.animals[animal.id];
+
+    board.ui.containers.tiles[tileId].appendChild(animalElt);
+  }
+
+  async notif_placeActionToken(notif: Notif<NotifPlaceActionToken>) {
+    const { playerId, actionToken, tileId } = notif.args;
+
+    const tokenElt = Tokens.getInstance().ui.actionTokens[actionToken.id];
+
+    if (!tokenElt) {
+      return;
+    }
+    Board.getInstance().ui.containers.tiles[tileId].appendChild(tokenElt);
+  }
+
+  async notif_scorePoints(notif: Notif<NotifScorePoints>) {
+    const { animal, animalToken, phase } = notif.args;
+    const board = Board.getInstance();
+    if (phase === FIRST_PHASE) {
+      board.ui.containers.setAsideStandees.appendChild(
+        board.ui.animals[animal.id]
+      );
+    } else {
+      board.ui.containers.pointsTracker.appendChild(
+        board.ui.animals[animal.id]
+      );
+    }
+  }
 }

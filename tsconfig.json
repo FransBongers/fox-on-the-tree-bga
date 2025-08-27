@@ -68,8 +68,11 @@
     "src/player-manager/player.ts",
     "src/player-manager/templates.ts",
     "src/states/TakeAction.ts",
+    "src/states/UseActionToken.ts",
+    "src/states/Escape.ts",
     "src/static-data/index.ts",
     "src/templates.ts",
+    "src/tokens/index.ts",
     "src/utility.ts",
   ]
 }

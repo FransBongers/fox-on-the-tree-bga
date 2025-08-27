@@ -8,10 +8,17 @@ use Bga\Games\FoxOnTheTree\Managers\Players;
 
 class AtomicActions
 {
-  // Mapping of actionId and corresponding class
+    // Mapping of actionId and corresponding class
   static $classes = [
     TAKE_ACTION => TAKE_ACTION,
     LOG_PHASE => LOG_PHASE,
+    USE_ACTION_TOKEN => USE_ACTION_TOKEN,
+    RESOLVE_CONFLICT => RESOLVE_CONFLICT,
+    CHECK_REACH_FINAL_TILE => CHECK_REACH_FINAL_TILE,
+    ESCAPE => ESCAPE,
+    ELIMINATE_ANIMALS => ELIMINATE_ANIMALS,
+    END_OF_FIRST_PHASE => END_OF_FIRST_PHASE,
+    PRE_END_OF_GAME => PRE_END_OF_GAME,
   ];
 
   public static function get($actionId, $ctx = null)

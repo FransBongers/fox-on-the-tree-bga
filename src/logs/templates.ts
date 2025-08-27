@@ -25,3 +25,11 @@ const tplLogTokenPlayerName = ({
 
 /* ------- GAME SPECIFIC LOG TOKENS ------- */
 
+const tplLogTokenAnimal = (animal: string) =>
+  `<div class="log-token fott-animal" data-animal="${animal}" data-phase="1"></div>`;
+
+const tplLogTokenActionToken = (type: string) =>
+  `<div class="log-token fott-action-token" data-type="${type}"></div>`;
+
+const tplLogTokenTile = (tile: string) =>
+  `<div class="log-token fott-tile" data-tile-id="${tile}"></div>`;

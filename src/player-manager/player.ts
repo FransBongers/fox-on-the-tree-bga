@@ -11,7 +11,6 @@ class FottPlayer {
   protected playerId: number;
   private playerName: string;
   public counters: Record<string, IconCounter> = {};
-  
 
   public ui: Record<string, HTMLElement> = {};
 
@@ -78,17 +77,22 @@ class FottPlayer {
       return;
     }
 
-    // node.insertAdjacentElement(
-    //   'afterbegin',
-    //   this.cubeCounters[RED].getElement()
-    // );
+    node.insertAdjacentHTML('afterbegin', tplPlayerPanelInfo(this.playerId));
 
     this.updatePlayerPanel(gamedatas);
   }
 
   updatePlayerBoard(playerGamedatas: PlayerDataAlias) {}
 
-  updatePlayerPanel(gamedatas: GamedatasAlias) {}
+  updatePlayerPanel(gamedatas: GamedatasAlias) {
+    const card = gamedatas.players[this.playerId].card;
+    if (card) {
+      const node = document.getElementById(`card_${this.playerId}`);
+      if (node) {
+        node.insertAdjacentHTML('afterbegin', tplCard(card.id));
+      }
+    }
+  }
 
   // ..######...########.########.########.########.########...######.
   // .##....##..##..........##.......##....##.......##.....##.##....##

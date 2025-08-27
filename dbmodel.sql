@@ -73,6 +73,8 @@ CREATE TABLE IF NOT EXISTS `animals` (
   `animal_id` varchar(100) NOT NULL,
   `animal_location` varchar(32) NOT NULL,
   `animal_state` int(10) DEFAULT 0,
+  `points_phase_1` int(10) DEFAULT 0,
+  `points_phase_2` int(10) DEFAULT 0,
   PRIMARY KEY (`animal_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
