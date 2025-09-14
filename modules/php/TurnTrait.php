@@ -49,7 +49,7 @@ trait TurnTrait
 
     $nodes = array_merge($nodes, [
       [
-        'action' => USE_ACTION_TOKEN,
+        'action' => CHECK_USE_ACTION_TOKEN,
         'playerId' => $playerId,
         'optional' => true,
       ],

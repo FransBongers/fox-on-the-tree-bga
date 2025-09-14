@@ -39,28 +39,26 @@ class PreEndOfGame extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
   {
     /**
      * TODO
-     * - calculate final scores
      * - stats
-     * - tie breakers
      */
     $animals = Animals::getAll();
     $players = Players::getAll();
     foreach ($players as $player) {
       $points = 0;
       $card = $player->getCard();
+      Notifications::revealCard($player, $card);
       foreach ($card->getFavored() as $animalId) {
         $animal = $animals[$animalId];
-        $points += $animal->getTotalPoints();;
+        $pointsForAnimal = $animal->getTotalPoints();
+        $player->incScore($pointsForAnimal);
+        Notifications::scorePointsForAnimal($player, $animal, $pointsForAnimal);
       }
-      $points -= $animals[$card->getUnfavored()]->getTotalPoints();
-      $player->setScore($points);
-      Notifications::message(
-        clienttranslate('${player_name} scores ${points} points from their card'),
-        [
-          'player' => $player,
-          'points' => $points
-        ]
-      );
+
+      $unfavoredAnimal = $animals[$card->getUnfavored()];
+      $pointsForUnfavoredAnimal = $unfavoredAnimal->getTotalPoints() * -1;
+      $player->incScore($pointsForUnfavoredAnimal);
+      Notifications::scorePointsForAnimal($player, $unfavoredAnimal, $pointsForUnfavoredAnimal);
+
       $player->setScoreAux(ActionTokens::countInLocation(Locations::actionTokens($player->getId())));
     }
 

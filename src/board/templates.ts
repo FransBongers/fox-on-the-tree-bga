@@ -13,5 +13,4 @@ const tplBoard = (gamedatas: GamedatasAlias) => `<div id="fott-board">
   </div>
   <div id="fott-select-boxes"></div>
   <div id="fott-set-aside-standees"></div>
-  <div id="fott-points-tracker"></div>
 </div>`;

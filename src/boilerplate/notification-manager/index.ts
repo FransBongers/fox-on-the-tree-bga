@@ -61,11 +61,14 @@ class NotificationManager {
       'log',
       'message',
       'phase',
+      'refreshUI',
+      'refreshUIPrivate',
       // Game specific
       'discardActionToken',
       'moveAnimal',
       'placeActionToken',
       'scorePoints',
+      'scorePointsForAnimal',
     ];
 
     // example: https://github.com/thoun/knarr/blob/main/src/knarr.ts
@@ -156,65 +159,83 @@ class NotificationManager {
     // Only here so messages get displayed in title bar
   }
 
+  async notif_refreshUI(notif: Notif<NotifRefreshUI>) {
+    const { data: gamedatas } = notif.args;
+
+    const { players: _players, ...otherData } = gamedatas;
+
+    const updatedGamedatas = {
+      ...this.game.gamedatas,
+      ...otherData,
+    };
+    this.game.gamedatas = updatedGamedatas;
+    this.game.clearInterface();
+
+    PointsTracker.getInstance().updateInterface(updatedGamedatas);
+    const players = PlayerManager.getInstance().getPlayers();
+    await Promise.all(
+      players.map((player) => player.updateActionTokensAsync(updatedGamedatas))
+    );
+    await Board.getInstance().updateInterface(updatedGamedatas);
+  }
+
+  async notif_refreshUIPrivate(notif: Notif<NotifRefreshUIPrivate>) {
+    const { playerId } = notif.args;
+    const player = this.getPlayer(playerId);
+  }
+
   async notif_phase(notif: Notif<NotifPhase>) {
-    const { phase } = notif.args;
+    const { phase, animals } = notif.args;
     if (phase !== SECOND_PHASE) {
       return;
     }
     const board = Board.getInstance();
-    Object.entries(board.ui.animals).forEach(([animalId, animalElt]) => {
-      animalElt.dataset.phase = '2';
-      const type = this.game.gamedatas.animals[animalId].type;
-      if (type === 'Predator') {
-        board.ui.containers.tiles[FARM].appendChild(animalElt);
-      } else {
-        board.ui.containers.tiles[LAIR_OF_PREDATORS].appendChild(animalElt);
-      }
-    });
+
+    await Promise.all(
+      animals?.map(async (animal) =>
+        board.animalStocks[animal.location].addCard(animal)
+      ) || []
+    );
   }
 
   async notif_discardActionToken(notif: Notif<NotifDiscardActionToken>) {
     const { playerId, actionToken } = notif.args;
-    const tokenElt = Tokens.getInstance().ui.actionTokens[actionToken.id];
 
-    if (!tokenElt) {
-      return;
-    }
-
-    // Remove the token element from the DOM
-    tokenElt.remove();
+    // TODO: void stock?
+    this.game.actionTokenManager.removeCard(actionToken);
   }
 
   async notif_moveAnimal(notif: Notif<NotifMoveAnimal>) {
     const { playerId, animal, tileId } = notif.args;
     const board = Board.getInstance();
-    const animalElt = board.ui.animals[animal.id];
 
-    board.ui.containers.tiles[tileId].appendChild(animalElt);
+    await board.animalStocks[animal.location].addCard(animal);
   }
 
   async notif_placeActionToken(notif: Notif<NotifPlaceActionToken>) {
     const { playerId, actionToken, tileId } = notif.args;
 
-    const tokenElt = Tokens.getInstance().ui.actionTokens[actionToken.id];
+    const board = Board.getInstance();
 
-    if (!tokenElt) {
-      return;
-    }
-    Board.getInstance().ui.containers.tiles[tileId].appendChild(tokenElt);
+    console.log(board.actionTokenStocks);
+
+    await board.actionTokenStocks[actionToken.location].addCard(actionToken);
   }
 
   async notif_scorePoints(notif: Notif<NotifScorePoints>) {
     const { animal, animalToken, phase } = notif.args;
     const board = Board.getInstance();
-    if (phase === FIRST_PHASE) {
-      board.ui.containers.setAsideStandees.appendChild(
-        board.ui.animals[animal.id]
-      );
-    } else {
-      board.ui.containers.pointsTracker.appendChild(
-        board.ui.animals[animal.id]
-      );
-    }
+
+    await Promise.all([
+      Board.getInstance().setAsideStandees.addCard(animal),
+      PointsTracker.getInstance().tokenSpots[animalToken.location].addCard(
+        animalToken
+      ),
+    ]);
+  }
+
+  async notif_scorePointsForAnimal(notif: Notif<NotifScorePointsForAnimal>) {
+    const { points, playerId } = notif.args;
+    incScore(playerId, points);
   }
 }

@@ -1,0 +1,18 @@
+const POINTS_SPOTS_CONFIG: Record<string, AbsolutePosition> = {
+  points_phase1_1: { top: 184, left: 626 },
+  points_phase1_2: { top: 406, left: 716 },
+  points_phase1_3: { top: 634, left: 626 },
+  points_phase1_4: { top: 714, left: 412 },
+  points_phase1_5: { top: 634, left: 198 },
+  points_phase1_6: { top: 406, left: 109 },
+  points_phase1_7: { top: 184, left: 198 },
+  points_phase1_8: { top: 110, left: 412 },
+  points_phase2_1: { top: 114, left: 696 },
+  points_phase2_2: { top: 406, left: 805 },
+  points_phase2_3: { top: 706, left: 696 },
+  points_phase2_4: { top: 806, left: 412 },
+  points_phase2_5: { top: 706, left: 132 },
+  points_phase2_6: { top: 406, left: 20 },
+  points_phase2_7: { top: 114, left: 132 },
+  points_phase2_8: { top: 18, left: 412 },
+};

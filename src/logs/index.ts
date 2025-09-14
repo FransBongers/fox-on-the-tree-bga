@@ -6,6 +6,7 @@ const LOG_TOKEN_PLAYER_NAME = 'playerName';
 const LOG_TOKEN_ANIMAL = 'animal';
 const LOG_TOKEN_ACTION_TOKEN = 'actionToken';
 const LOG_TOKEN_TILE = 'tile';
+const LOG_TOKEN_CARD = 'card';
 
 const CLASS_LOG_TOKEN = 'log-token';
 
@@ -43,6 +44,8 @@ const getTokenDiv = ({
       return tplLogTokenAnimal(value);
     case LOG_TOKEN_ACTION_TOKEN:
       return tplLogTokenActionToken(value);
+    case LOG_TOKEN_CARD:
+      return tplLogTokenCard(value);
     case LOG_TOKEN_TILE:
       return tplLogTokenTile(value);
     default:

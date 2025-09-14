@@ -150,6 +150,13 @@ $machinestates = [
         ->action('stAtomicAction')
         ->build(),
 
+    ST_CHECK_USE_ACTION_TOKEN => GameStateBuilder::create()
+        ->name(CHECK_USE_ACTION_TOKEN)
+        ->description('')
+        ->type(StateType::GAME)
+        ->action('stAtomicAction')
+        ->build(),
+
     ST_ELIMINATE_ANIMALS => GameStateBuilder::create()
         ->name(ELIMINATE_ANIMALS)
         ->description('')

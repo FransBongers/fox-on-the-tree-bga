@@ -29,4 +29,5 @@ const PREF_TWO_COLUMN_LAYOUT = 'twoColumnLayout';
  */
 const BOARD_SCALE = 'boardScale';
 const CARD_SCALE = 'cardScale';
-
+const TILE_SCALE = 'tileScale';
+const POINTS_TRACKER_SCALE = 'pointsTrackerScale';

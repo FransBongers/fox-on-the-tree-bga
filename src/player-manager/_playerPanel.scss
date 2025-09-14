@@ -11,17 +11,17 @@
   // grid-row-gap: 8px;
   --iconScale: 1;
   --cardScale: 1;
-  --tokenScale: 1;
+  --tokenScale: 0.7;
   // // padding: 2px;
   // padding-top: 8px;
 }
 
 .fott-player-action-tokens {
   width: 100%;
-  display: grid;
-  grid-template: 48px auto / repeat(4, 48px);
-  justify-content: space-evenly;
-  gap: 4px;
+  // display: grid;
+  // grid-template: 48px auto / repeat(4, 48px);
+  // justify-content: space-evenly;
+  // gap: 4px;
 }
 
 .fott-player-card {

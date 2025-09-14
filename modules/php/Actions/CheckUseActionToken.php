@@ -4,18 +4,18 @@ namespace Bga\Games\FoxOnTheTree\Actions;
 
 use Bga\Games\FoxOnTheTree\Boilerplate\Core\Engine;
 use Bga\Games\FoxOnTheTree\Boilerplate\Core\Engine\LeafNode;
-use Bga\Games\FoxOnTheTree\Boilerplate\Core\Globals;
 use Bga\Games\FoxOnTheTree\Boilerplate\Core\Notifications;
 use Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Locations;
 use Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Utils;
 use Bga\Games\FoxOnTheTree\Managers\Animals;
+use Bga\Games\FoxOnTheTree\Managers\AtomicActions;
 use Bga\Games\FoxOnTheTree\Managers\Players;
 
-class EndOfFirstPhase extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
+class CheckUseActionToken extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
 {
   public function getState()
   {
-    return ST_END_OF_FIRST_PHASE;
+    return ST_CHECK_USE_ACTION_TOKEN;
   }
 
   // ..######..########....###....########.########
@@ -34,25 +34,24 @@ class EndOfFirstPhase extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
   // .##.....##.##....##....##.....##..##.....##.##...###
   // .##.....##..######.....##....####..#######..##....##
 
-  public function stEndOfFirstPhase()
+
+  public function stCheckUseActionToken()
   {
-    Globals::setPhase(SECOND_PHASE);;
+    $action = AtomicActions::get(USE_ACTION_TOKEN);
+    $playerId = $this->ctx->getPlayerId();
+    $options = $action->getOptions($playerId);
 
-    $animals = Animals::getAll()->toArray();
-    foreach ($animals as $animal) {
-      $location = $animal->isPredator() ? FARM : LAIR_OF_PREDATORS;
-      $animal->setLocation($location);
-      $facing = $animal->isPredator() ? 'right' : 'left';
-      $animal->setFacing($facing);
+    if (count($options) > 0) {
+      $action = [
+        'action' => USE_ACTION_TOKEN,
+        'playerId' => $playerId,
+      ];
+      $this->ctx->insertAsBrother(Engine::buildTree($action));
     }
-
-    Notifications::phase(clienttranslate('Second Phase'), [
-      'phase' => SECOND_PHASE,
-      'animals' => $animals
-    ]);
 
     $this->resolveAction(['automatic' => true]);
   }
+
 
   //  .##.....##.########.####.##.......####.########.##....##
   //  .##.....##....##.....##..##........##.....##.....##..##.
@@ -61,5 +60,6 @@ class EndOfFirstPhase extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
   //  .##.....##....##.....##..##........##.....##.......##...
   //  .##.....##....##.....##..##........##.....##.......##...
   //  ..#######.....##....####.########.####....##.......##...
+
 
 }

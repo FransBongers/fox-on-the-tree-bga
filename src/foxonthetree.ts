@@ -56,6 +56,9 @@ class FoxOnTheTree implements Game {
   public loadingComplete: boolean = false;
 
   // Card managers
+  public actionTokenManager: ActionTokenManager;
+  public animalManager: AnimalManager;
+  public animalTokenManager: AnimalTokenManager;
 
   private states = {
     ConfirmPartialTurn,
@@ -118,6 +121,9 @@ class FoxOnTheTree implements Game {
           ? 0
           : 2100 - (settings.get(PREF_ANIMATION_SPEED) as number),
     });
+    this.actionTokenManager = new ActionTokenManager(this);
+    this.animalManager = new AnimalManager(this);
+    this.animalTokenManager = new AnimalTokenManager(this);
 
     StaticData.create(this);
     Interaction.create(this);
@@ -125,7 +131,8 @@ class FoxOnTheTree implements Game {
     NotificationManager.create(this);
 
     Board.create(this);
-    Tokens.create(this);
+    PointsTracker.create(this);
+    // Tokens.create(this);
 
     NotificationManager.getInstance().setupNotifications();
 
@@ -336,6 +343,7 @@ class FoxOnTheTree implements Game {
   public clearInterface() {
     //  this.playerManager.clearInterface();
     //  this.gameMap.clearInterface();
+    PointsTracker.getInstance().clearInterface();
   }
 
   clearPossible() {

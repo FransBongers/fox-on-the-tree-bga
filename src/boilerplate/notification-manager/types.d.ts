@@ -13,6 +13,12 @@ interface NotifWithPlayerArgs {
   player_name: string;
 }
 
+interface NotifRefreshUI {
+  data: Partial<GamedatasAlias>;
+}
+
+interface NotifRefreshUIPrivate extends NotifWithPlayerArgs {}
+
 interface NotifDiscardActionToken extends NotifWithPlayerArgs {
   actionToken: FottActionToken;
 }
@@ -24,8 +30,8 @@ interface NotifMoveAnimal extends NotifWithPlayerArgs {
 
 interface NotifPhase {
   phase: string | number;
+  animals?: FottAnimal[];
 }
-
 
 interface NotifPlaceActionToken extends NotifWithPlayerArgs {
   actionToken: FottActionToken;
@@ -34,6 +40,10 @@ interface NotifPlaceActionToken extends NotifWithPlayerArgs {
 
 interface NotifScorePoints {
   animal: FottAnimal;
-  animalToken: FottAnimalToken | null;
+  animalToken: FottAnimalToken;
   phase: 1 | 2;
+}
+
+interface NotifScorePointsForAnimal extends NotifWithPlayerArgs {
+  points: number;
 }

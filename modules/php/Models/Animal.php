@@ -19,6 +19,7 @@ class Animal extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\DB_Model
   protected $state;
   protected $pointsPhase1;
   protected $pointsPhase2;
+  protected $facing;
 
   protected $type;
 
@@ -26,6 +27,7 @@ class Animal extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\DB_Model
     'id' => ['animal_id', 'str'],
     'location' => 'animal_location',
     'state' => ['animal_state', 'int'],
+    'facing' => ['facing', 'str'],
     'pointsPhase1' => ['points_phase_1', 'int'],
     'pointsPhase2' => ['points_phase_2', 'int'],
   ];
@@ -176,17 +178,18 @@ class Animal extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\DB_Model
 
   public function scorePoints($phase, $points)
   {
+    $animalTokenId = $this->getId() . '_' . ($phase === FIRST_PHASE ? PHASE_1 : PHASE_2);
+    $animalToken = AnimalTokens::get($animalTokenId);
+    $this->setLocation(SET_ASIDE_STANDEES);
+
+    $animalToken->setLocation(Locations::points($phase === FIRST_PHASE ? PHASE_1 : PHASE_2, $points));
+
     if ($phase === FIRST_PHASE) {
       $this->setPointsPhase1($points);
-      $this->setLocation(SET_ASIDE_STANDEES);
-      $animalToken = AnimalTokens::get($this->getId());
-      $animalToken->setLocation(Locations::points($points));
-      Notifications::scorePoints($this, $phase, $points, $animalToken);
     } else {
       $this->setPointsPhase2($points);
-      $this->setLocation(Locations::points($points));
-      Notifications::scorePoints($this, $phase, $points);
     }
+    Notifications::scorePoints($this, $phase, $points, $animalToken);
   }
 
   public function reachDestination()

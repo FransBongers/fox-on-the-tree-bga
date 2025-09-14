@@ -65,24 +65,28 @@ class Notifications
     ]);
   }
 
-  // public static function refreshHand($player, $hand)
-  // {
-  //   // foreach ($hand as &$card) {
-  //   //   $card = self::filterCardDatas($card);
-  //   // }
-  //   self::notify($player, 'refreshHand', '', [
-  //     'player' => $player,
-  //     'hand' => $hand,
-  //   ]);
-  // }
+  public static function refreshUIPrivate($player, $privateData)
+  {
+    self::notify($player, 'refreshUIPrivate', '', array_merge([
+      'player' => $player,
+    ], $privateData));
+  }
 
   public static function refreshUI($data)
   {
-    // Keep only the thing that matters
-    $refreshedData = [
-      // Add data here that needs to be refreshed
+    unset($data['playerOrder']);
+    unset($data['playerorder']);
+    unset($data['staticData']);
+    unset($data['gamestates']);
 
-    ];
+    foreach ($data['players'] as $playerId => $player) {
+      unset($data['players'][$playerId]['card']);
+    }
+
+    self::notifyAll('refreshUI', '', [
+      // 'datas' => $fDatas,
+      'data' => $data
+    ]);
   }
 
 
@@ -247,7 +251,16 @@ class Notifications
     ]);
   }
 
-  public static function scorePoints($animal, $phase, $numberOfPoints, $animalToken = null)
+  public static function revealCard($player, $card)
+  {
+    self::message(clienttranslate('${player_name} reveals their card ${tkn_card}'), [
+      'player' => $player,
+      'card' => $card,
+      'tkn_card' => $card->getId(),
+    ]);
+  }
+
+  public static function scorePoints($animal, $phase, $numberOfPoints, $animalToken)
   {
     $text = $numberOfPoints === 1 ? clienttranslate('${tkn_animal} scores ${tkn_boldText_number} point') : clienttranslate('${tkn_animal} scores ${tkn_boldText_number} points');
     self::notifyAll('scorePoints', $text, [
@@ -255,6 +268,17 @@ class Notifications
       'animal' => $animal->jsonSerialize(),
       'animalToken' => $animalToken,
       'tkn_boldText_number' => $numberOfPoints,
+      'tkn_animal' => $animal->getId(),
+    ]);
+  }
+
+  public static function scorePointsForAnimal($player, $animal, $pointsForAnimal)
+  {
+    $text = $pointsForAnimal < 0 ? clienttranslate('${player_name} subtracts ${tkn_boldText_number} points for ${tkn_animal}') : clienttranslate('${player_name} earns ${tkn_boldText_number} points for ${tkn_animal}');
+    self::notifyAll('scorePointsForAnimal', $text, [
+      'player' => $player,
+      'tkn_boldText_number' => abs($pointsForAnimal),
+      'points' => $pointsForAnimal,
       'tkn_animal' => $animal->getId(),
     ]);
   }

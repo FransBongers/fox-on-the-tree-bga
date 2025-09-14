@@ -75,7 +75,7 @@ class UseActionToken implements State {
 
     addSecondaryActionButton({
       id: 'pass_btn',
-      text: _('Do not use'),
+      text: _('Skip'),
       callback: () => {
         performAction('actUseActionToken', {
           skip: true,
@@ -107,14 +107,14 @@ class UseActionToken implements State {
         );
         break;
       case ESCAPE:
-              updatePageTitle(
+        updatePageTitle(
           _('${you} may select an animal to return to their starting tile'),
           {
             tkn_actionToken: tokenType,
           }
         );
         Object.keys(this.args.options[ESCAPE]).forEach((target) =>
-          onClick(board.ui.animals[target], () => {
+          onClick(document.getElementById(target), () => {
             this.updateInterfaceConfirm(tokenType, target);
           })
         );
@@ -127,36 +127,40 @@ class UseActionToken implements State {
   private updateInterfaceConfirm(type: ActionTokenType, target: string) {
     clearPossible();
 
-    switch (type) {
-      case BANANA:
-      case SWAMP:
-        updatePageTitle(_('Place ${tkn_actionToken} on ${tkn_tile} ?'), {
-          tkn_actionToken: type,
-          tkn_tile: target,
-        });
-        break;
-      case ESCAPE:
-        updatePageTitle(
-          _('Use ${tkn_actionToken} to return ${tkn_animal} to ${tkn_tile} ?'),
-          {
-            tkn_actionToken: type,
-            tkn_animal: target,
-            tkn_tile: this.args.options.Escape[target],
-          }
-        );
-        break;
-    }
-
-    setSelected(target);
-
-    addConfirmButton(() => {
+    const callback = () => {
       performAction('actUseActionToken', {
         skip: false,
         tokenType: type,
         target,
       });
-    });
-    addCancelButton();
+    };
+    callback();
+    return;
+
+    // switch (type) {
+    //   case BANANA:
+    //   case SWAMP:
+    //     updatePageTitle(_('Place ${tkn_actionToken} on ${tkn_tile} ?'), {
+    //       tkn_actionToken: type,
+    //       tkn_tile: target,
+    //     });
+    //     break;
+    //   case ESCAPE:
+    //     updatePageTitle(
+    //       _('Use ${tkn_actionToken} to return ${tkn_animal} to ${tkn_tile} ?'),
+    //       {
+    //         tkn_actionToken: type,
+    //         tkn_animal: target,
+    //         tkn_tile: this.args.options.Escape[target],
+    //       }
+    //     );
+    //     break;
+    // }
+
+    // setSelected(target);
+
+    // addConfirmButton(callback);
+    // addCancelButton();
   }
 
   //  .##.....##.########.####.##.......####.########.##....##

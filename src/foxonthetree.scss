@@ -18,6 +18,7 @@
 @use './player-manager/playerPanel';
 @use './logs/logs';
 @use './tokens/tokens';
+@use './points-tracker/points-tracker';
 
 html {
   // background-image: url('img/background.jpg');
@@ -30,4 +31,11 @@ html {
   display: flex;
   flex-flow: column;
   align-items: center;
+}
+
+#page-title {
+  min-height: 76px;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
 }

@@ -2,11 +2,7 @@ const BANANA = 'Banana';
 const SWAMP = 'Swamp';
 const ESCAPE = 'Escape';
 
-const ACTION_TOKENS: ActionTokenType[] = [
-  BANANA,
-  SWAMP,
-  ESCAPE,
-];
+const ACTION_TOKENS: ActionTokenType[] = [BANANA, SWAMP, ESCAPE];
 
 const BEAR = 'Bear';
 const CHICKEN = 'Chicken';
@@ -17,16 +13,7 @@ const PIG = 'Pig';
 const TIGER = 'Tiger';
 const WOLF = 'Wolf';
 
-const ANIMALS = [
-  BEAR,
-  CHICKEN,
-  COW,
-  FOX,
-  GOAT,
-  PIG,
-  TIGER,
-  WOLF,
-];
+const ANIMALS = [BEAR, CHICKEN, COW, FOX, GOAT, PIG, TIGER, WOLF];
 
 const FARM_ANIMAL = 'FarmAnimal';
 const PREDATOR = 'Predator';
@@ -62,6 +49,9 @@ const FIRST_PHASE = 1;
 const SECOND_PHASE = 2;
 const LEFT = -1;
 const RIGHT = 1;
+
+const PHASE_1 = 'phase1';
+const PHASE_2 = 'phase2';
 
 const BASIC = 'basic';
 const SPECIAL = 'special';

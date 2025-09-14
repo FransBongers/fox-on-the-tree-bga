@@ -9,6 +9,8 @@
   --iconScale: var(--boardScale);
   --tileScale: var(--leftColumnScale) * var(--tileSizeMultiplier);
   min-width: 100%;
+  padding-top: calc(var(--boardScale) * 40px);
+
   // background-color: yellow;
   // width: calc(var(--boardScale) * 2000px);
 
@@ -20,10 +22,12 @@
     gap: calc(var(--boardScale) * 8px);
     padding: calc(var(--boardScale) * 4px);
     width: calc(var(--leftColumnScale) * 2080px);
+    margin-bottom: calc(var(--boardScale) * 56px);
   }
 }
 
 .fott-tile {
+  position: relative;
   width: calc(var(--tileScale) * 200px);
   aspect-ratio: 502 / 501;
   background-image: url('img/tiles.jpg');
@@ -35,7 +39,20 @@
   justify-content: center;
   align-items: center;
 
+  .fott-animal-container {
+    transition: top 500ms ease-in-out, left 500ms ease-in-out;
+  }
+
   // --tokenScale: var(--tileScale) * 1.5;
+}
+
+.fott-action-token-slot {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: calc(var(--tileScale) * -66px);
+  height: calc(var(--tokenScale) * 81px);
+  // background-color: yellow;
 }
 
 .fott-tile.selectable {
@@ -49,11 +66,19 @@
   outline: solid calc(var(--tileScale) * 4px) base.$selected-color;
 }
 
-#fott-points-tracker,
 #fott-set-aside-standees {
+  margin-left: 8px;
+  position: relative;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  height: calc(var(--tokenScale) * 107px);
+  justify-content: flex-start;
+
+  .fott-animal-container {
+    top: 0px !important;
+    left: 0px !important;
+  }
 }
 
 $tiles: (
@@ -76,20 +101,30 @@ $tiles: (
   }
 }
 
+.fott-animal-container {
+  position: relative;
+  width: calc(var(--tokenScale) * 100px);
+  aspect-ratio: 375 / 400;
+}
+
 .fott-animal {
-  width: calc(var(--tokenScale) * 80px);
+  width: calc(var(--tokenScale) * 100px);
   aspect-ratio: 375 / 400;
   background-image: url('img/animals.png');
   background-size: 400% 200%;
   transition: tranform 1s;
 }
 
-.fott-animal[data-type='FarmAnimal'][data-phase='1'] {
+.fott-animal[data-facing='right'] {
   transform: scaleX(-1);
 }
 
-.fott-animal[data-type='Predator'][data-phase='2'] {
-  transform: scaleX(-1);
+// .fott-animal[data-type='Predator'][data-phase='2'] {
+//   transform: scaleX(-1);
+// }
+
+.fott-animal.card-side {
+  box-shadow: none !important;
 }
 
 $animals: (
@@ -110,19 +145,23 @@ $animals: (
   }
 }
 
-.fott-animal.selectable {
-  cursor: pointer;
-  filter: drop-shadow(2px 0px 0px base.$selectable-color)
-    drop-shadow(-2px 0px 0px base.$selectable-color)
-    drop-shadow(0px 2px 0px base.$selectable-color)
-    drop-shadow(0px -2px 0px base.$selectable-color);
+.fott-animal-container.selectable {
+  .fott-animal {
+    cursor: pointer;
+    filter: drop-shadow(2px 0px 0px base.$selectable-color)
+      drop-shadow(-2px 0px 0px base.$selectable-color)
+      drop-shadow(0px 2px 0px base.$selectable-color)
+      drop-shadow(0px -2px 0px base.$selectable-color);
+  }
 }
 
-.fott-animal.selectable:hover,
-.fott-animal.selected {
-  cursor: pointer;
-  filter: drop-shadow(2px 0px 0px base.$selected-color)
-    drop-shadow(-2px 0px 0px base.$selected-color)
-    drop-shadow(0px 2px 0px base.$selected-color)
-    drop-shadow(0px -2px 0px base.$selected-color);
+.fott-animal-container.selectable:hover,
+.fott-animal-container.selected {
+  .fott-animal {
+    cursor: pointer;
+    filter: drop-shadow(2px 0px 0px base.$selected-color)
+      drop-shadow(-2px 0px 0px base.$selected-color)
+      drop-shadow(0px 2px 0px base.$selected-color)
+      drop-shadow(0px -2px 0px base.$selected-color);
+  }
 }

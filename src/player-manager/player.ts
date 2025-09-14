@@ -11,6 +11,7 @@ class FottPlayer {
   protected playerId: number;
   private playerName: string;
   public counters: Record<string, IconCounter> = {};
+  public actionTokens: LineStock<FottActionToken>;
 
   public ui: Record<string, HTMLElement> = {};
 
@@ -78,6 +79,13 @@ class FottPlayer {
     }
 
     node.insertAdjacentHTML('afterbegin', tplPlayerPanelInfo(this.playerId));
+    this.actionTokens = new LineStock<FottActionToken>(
+      this.game.actionTokenManager,
+      document.getElementById(`actionTokens_${this.playerId}`),
+      {
+        gap: '4px',
+      }
+    );
 
     this.updatePlayerPanel(gamedatas);
   }
@@ -85,13 +93,29 @@ class FottPlayer {
   updatePlayerBoard(playerGamedatas: PlayerDataAlias) {}
 
   updatePlayerPanel(gamedatas: GamedatasAlias) {
-    const card = gamedatas.players[this.playerId].card;
+    const playerData = gamedatas.players[this.playerId];
+    const card = playerData.card;
     if (card) {
       const node = document.getElementById(`card_${this.playerId}`);
       if (node) {
         node.insertAdjacentHTML('afterbegin', tplCard(card.id));
       }
     }
+    Object.values(gamedatas.actionTokens).forEach((actionToken) => {
+      if (actionToken.location === `actionTokens_${this.playerId}`) {
+        this.actionTokens.addCard(actionToken);
+      }
+    });
+  }
+
+  async updateActionTokensAsync(gamedatas: GamedatasAlias) {
+    await Promise.all(
+      Object.values(gamedatas.actionTokens).map(async (actionToken) => {
+        if (actionToken.location === `actionTokens_${this.playerId}`) {
+          await this.actionTokens.addCard(actionToken);
+        }
+      })
+    );
   }
 
   // ..######...########.########.########.########.########...######.

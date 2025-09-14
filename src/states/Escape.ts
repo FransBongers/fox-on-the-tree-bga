@@ -73,7 +73,7 @@ class Escape implements State {
       }
     );
 
-    addPrimaryActionButton({
+    addSecondaryActionButton({
       id: 'use_btn',
       text: formatStringRecursive(_('Use ${tkn_actionToken}'), {
         tkn_actionToken: ESCAPE,

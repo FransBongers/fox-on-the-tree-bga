@@ -1,10 +1,23 @@
 @use '../base';
+@use 'sass:math';
+@use 'sass:map';
+
+.fott-action-token-container {
+  position: relative;
+  width: calc(var(--tokenScale) * 75px);
+  aspect-ratio: 402 / 432;
+}
 
 .fott-action-token {
-  width: calc(var(--tokenScale) * 48px);
+  width: calc(var(--tokenScale) * 75px);
   aspect-ratio: 402 / 432;
   background-image: url('img/tokens.png');
   background-size: 300% 100%;
+}
+
+.fott-animal-token.card-side,
+.fott-action-token.card-side {
+  box-shadow: none !important;
 }
 
 .fott-action-token[data-type='Banana'] {
@@ -19,19 +32,54 @@
   background-position-x: 100%;
 }
 
-.fott-action-token.selectable {
-  cursor: pointer;
-  filter: drop-shadow(2px 0px 0px base.$selectable-color)
-    drop-shadow(-2px 0px 0px base.$selectable-color)
-    drop-shadow(0px 2px 0px base.$selectable-color)
-    drop-shadow(0px -2px 0px base.$selectable-color);
+.fott-action-token-container.selectable {
+  .fott-action-token {
+    cursor: pointer;
+    filter: drop-shadow(2px 0px 0px base.$selectable-color)
+      drop-shadow(-2px 0px 0px base.$selectable-color)
+      drop-shadow(0px 2px 0px base.$selectable-color)
+      drop-shadow(0px -2px 0px base.$selectable-color);
+  }
 }
 
-.fott-action-token.selectable:hover,
-.fott-action-token.selected {
-  cursor: pointer;
-  filter: drop-shadow(2px 0px 0px base.$selected-color)
-    drop-shadow(-2px 0px 0px base.$selected-color)
-    drop-shadow(0px 2px 0px base.$selected-color)
-    drop-shadow(0px -2px 0px base.$selected-color);
+.fott-action-token-container.selectable:hover,
+.fott-action-token-container.selected {
+  .fott-action-token {
+    cursor: pointer;
+    filter: drop-shadow(2px 0px 0px base.$selected-color)
+      drop-shadow(-2px 0px 0px base.$selected-color)
+      drop-shadow(0px 2px 0px base.$selected-color)
+      drop-shadow(0px -2px 0px base.$selected-color);
+  }
+}
+
+.fott-animal-token-container {
+  position: relative;
+  width: calc(var(--tokenScale) * 75px);
+  aspect-ratio: 302 / 307;
+}
+
+.fott-animal-token {
+  width: calc(var(--tokenScale) * 75px);
+  aspect-ratio: 302 / 307;
+  background-image: url('img/animal-tokens.png');
+  background-size: 400% 200%;
+}
+
+$animals: (
+  1: 'Bear',
+  2: 'Chicken',
+  3: 'Cow',
+  4: 'Fox',
+  5: 'Goat',
+  6: 'Pig',
+  7: 'Tiger',
+  8: 'Wolf',
+);
+
+@for $i from 1 through 8 {
+  .fott-animal-token[data-animal='#{map.get($animals,$i)}'] {
+    background-position-x: math.div((($i - 1) % 4 * 100%), 3);
+    background-position-y: math.div(math.floor(calc(($i - 1) / 4)) * 100%, 1);
+  }
 }

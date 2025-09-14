@@ -38,11 +38,13 @@ interface FoxOnTheTreeGamedatas extends Gamedatas {
   // Game specific
   actionTokens: Record<string, FottActionToken>;
   animals: Record<string, FottAnimal>;
+  animalTokens: Record<string, FottAnimalToken>;
   phase: 1 | 2;
 }
 
 interface FottAnimal extends GamePiece {
   type: 'FarmAnimal' | 'Predator';
+  facing: 'left' | 'right';
 }
 
 interface FottAnimalToken extends GamePiece {}

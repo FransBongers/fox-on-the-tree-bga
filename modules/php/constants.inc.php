@@ -20,6 +20,7 @@ const ST_ESCAPE = 9;
 const ST_ELIMINATE_ANIMALS = 10;
 const ST_END_OF_FIRST_PHASE = 11;
 const ST_PRE_END_OF_GAME = 12;
+const ST_CHECK_USE_ACTION_TOKEN = 13;
 
 /**
  * Game state names
@@ -32,6 +33,7 @@ const CHECK_REACH_FINAL_TILE = 'CheckReachFinalTile';
 const ELIMINATE_ANIMALS = 'EliminateAnimals';
 const END_OF_FIRST_PHASE = 'EndOfFirstPhase';
 const PRE_END_OF_GAME = 'PreEndOfGame';
+const CHECK_USE_ACTION_TOKEN = 'CheckUseActionToken';
 
 const BANANA = 'Banana';
 const SWAMP = 'Swamp';
@@ -108,6 +110,9 @@ const FIRST_PHASE = 1;
 const SECOND_PHASE = 2;
 const LEFT = -1;
 const RIGHT = 1;
+
+const PHASE_1 = 'phase1';
+const PHASE_2 = 'phase2';
 
 const BASIC = 'basic';
 const SPECIAL = 'special';

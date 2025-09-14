@@ -16,8 +16,8 @@ class Locations
     return 'hand_' . $playerId;
   }
 
-  public static function points($number)
+  public static function points($phase, $number)
   {
-    return 'points_' . $number;
+    return 'points_' . $phase . '_' . $number;
   }
 }

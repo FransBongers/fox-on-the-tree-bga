@@ -279,6 +279,7 @@ class Game extends \Bga\GameFramework\Table
             'animals' => Animals::getAll(),
             'actionTokens' => ActionTokens::getAll(),
             'phase' => Globals::getPhase(),
+            'animalTokens' => AnimalTokens::getAll()
         ];
 
 

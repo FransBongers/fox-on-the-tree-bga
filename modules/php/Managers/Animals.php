@@ -16,6 +16,7 @@ class Animals extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Pieces
   protected static $table = 'animals';
   protected static $prefix = 'animal_';
   protected static $customFields = [
+    'facing',
     'points_phase_1',
     'points_phase_2',
   ];
@@ -69,9 +70,12 @@ class Animals extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Pieces
     foreach (ANIMALS as $index => $animalId) {
       $animal = self::getCardInstance($animalId);
 
+      $isFarmAnimal = $animal->isFarmAnimal();
+
       $animals[$animalId] = [
         'id' => $animalId,
-        'location' => $animal->getType() === FARM_ANIMAL ? FARM : LAIR_OF_PREDATORS,
+        'location' => $isFarmAnimal ? FARM : LAIR_OF_PREDATORS,
+        'facing' => $isFarmAnimal ? 'right' : 'left'
       ];
     }
 

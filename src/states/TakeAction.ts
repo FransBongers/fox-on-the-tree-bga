@@ -54,35 +54,47 @@ class TakeAction implements State {
 
   private updateInterfaceInitialStep() {
     this.game.clearPossible();
+    if (!this.canSwampRescue() && this.canMoveAnimal()) {
+      this.updateInterfaceSelectAnimalToMove();
+      return;
+    }
+    if (this.canSwampRescue() && !this.canMoveAnimal()) {
+      this.updateInterfaceSelectSwampToken();
+      return;
+    }
 
     this.updatePageTitle();
 
-    const board = Board.getInstance();
-    const tokens = Tokens.getInstance();
-
     if (this.canMoveAnimal()) {
-      addPrimaryActionButton({
+      addSecondaryActionButton({
         id: 'move_btn',
-        text: _('Move an animal'),
+        text: formatStringRecursive(_('Move animal ${tkn_animal}'), {
+          tkn_animal: PIG,
+        }),
         callback: () => this.updateInterfaceSelectAnimalToMove(),
       });
     }
     if (this.canSwampRescue()) {
-      addPrimaryActionButton({
+      addSecondaryActionButton({
         id: 'rescue_btn',
-        text: formatStringRecursive(_('Perform a swamp rescue'), {}),
+        text: formatStringRecursive(
+          _('Rescue from the swamp ${tkn_actionToken}'),
+          {
+            tkn_actionToken: SWAMP,
+          }
+        ),
         callback: () => this.updateInterfaceSelectSwampToken(),
       });
     }
 
     Object.values(this.args.animals).forEach((moveOptions) => {
       const { animal } = moveOptions;
-      onClick(board.ui.animals[animal.id], () => {
+      onClick(document.getElementById(animal.id), () => {
         this.updateInterfaceSelectTile(moveOptions);
       });
     });
     this.args.swampTokens.forEach((token) => {
-      onClick(tokens.ui.actionTokens[token.id], () => {
+      onClick(document.getElementById(token.id), () => {
         this.updateInterfaceConfirmSwampRescue(token);
       });
     });
@@ -93,7 +105,7 @@ class TakeAction implements State {
   updateInterfaceSelectAnimalToMove() {
     this.game.clearPossible();
 
-    updatePageTitle(_('${you} must choose an animal to move'), {});
+    updatePageTitle(_('${you} must choose:'), {});
 
     Object.entries(this.args.animals).forEach(([animalId, moveOptions]) => {
       addSecondaryActionButton({
@@ -104,18 +116,24 @@ class TakeAction implements State {
         callback: () => this.updateInterfaceSelectTile(moveOptions),
       });
     });
+    Object.values(this.args.animals).forEach((moveOptions) => {
+      const { animal } = moveOptions;
+      onClick(document.getElementById(animal.id), () => {
+        this.updateInterfaceSelectTile(moveOptions);
+      });
+    });
     addCancelButton();
   }
 
   updateInterfaceSelectSwampToken() {
     this.game.clearPossible();
 
-    updatePageTitle(_('${you} must choose a ${tkn_actionToken} to remove'), {
+    updatePageTitle(_('${you} must choose a ${tkn_actionToken}'), {
       tkn_actionToken: SWAMP,
     });
 
     this.args.swampTokens.forEach((token) => {
-      onClick(Tokens.getInstance().ui.actionTokens[token.id], () => {
+      onClick(document.getElementById(token.id), () => {
         this.updateInterfaceConfirmSwampRescue(token);
       });
     });
@@ -186,7 +204,7 @@ class TakeAction implements State {
       tkn_tile: actionToken.location,
     });
 
-    setSelected(Tokens.getInstance().ui.actionTokens[actionToken.id]);
+    setSelected(document.getElementById(actionToken.id));
 
     const callback = () =>
       performAction('actTakeAction', {
@@ -226,17 +244,7 @@ class TakeAction implements State {
   }
 
   private updatePageTitle() {
-    const canMoveAnimal = this.canMoveAnimal();
-    const canSwampRescue = this.canSwampRescue();
-    if (canMoveAnimal && canSwampRescue) {
-      updatePageTitle(
-        _('${you} must move an animal or perform a Swamp Rescue')
-      );
-    } else if (canMoveAnimal) {
-      updatePageTitle(_('${you} must move an animal'));
-    } else if (canSwampRescue) {
-      updatePageTitle(_('${you} must perform a Swamp Rescue'));
-    }
+    updatePageTitle(_('${you} must choose:'));
   }
 
   //  ..######..##.......####..######..##....##

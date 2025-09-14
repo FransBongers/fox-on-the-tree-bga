@@ -29,7 +29,7 @@ class AnimalTokens extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Pieces
   {
     // $prefix = self::getClassPrefix($id);
 
-    $className = "\Bga\Games\FoxOnTheTree\AnimalTokens\\$id";
+    $className = "\Bga\Games\FoxOnTheTree\Models\AnimalToken";
     return new $className($data);
   }
 
@@ -58,16 +58,16 @@ class AnimalTokens extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Pieces
 
   private static function setupLoadCards()
   {
-
-
     $animals = [];
 
-
     foreach (ANIMALS as $index => $animalId) {
-      $animals[$animalId] = [
-        'id' => $animalId,
-        'location' => SUPPLY,
-      ];
+      foreach ([PHASE_1, PHASE_2] as $phase) {
+        $id = $animalId . '_' . $phase;
+        $animals[$id] = [
+          'id' => $id,
+          'location' => SUPPLY,
+        ];
+      }
     }
 
     // Create the cards

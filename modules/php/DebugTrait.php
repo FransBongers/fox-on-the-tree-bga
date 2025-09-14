@@ -11,6 +11,7 @@ use Bga\Games\FoxOnTheTree\Managers\Cards;
 use Bga\Games\FoxOnTheTree\Managers\ActionTokens;
 use Bga\Games\FoxOnTheTree\Managers\Animals;
 use Bga\Games\FoxOnTheTree\Managers\AnimalTokens;
+use Bga\Games\FoxOnTheTree\Managers\AtomicActions;
 
 trait DebugTrait
 {
@@ -21,8 +22,7 @@ trait DebugTrait
 
   function debug_test()
   {
-    Notifications::log('direction', Animals::get(BEAR)->getDirection());
-    Notifications::log('special', Animals::get(BEAR)->getMoveOptions());
+    AtomicActions::get(PRE_END_OF_GAME)->stPreEndOfGame();
   }
 
   function debug_engineDisplay()

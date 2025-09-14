@@ -33,3 +33,6 @@ const tplLogTokenActionToken = (type: string) =>
 
 const tplLogTokenTile = (tile: string) =>
   `<div class="log-token fott-tile" data-tile-id="${tile}"></div>`;
+
+const tplLogTokenCard = (cardId: string) =>
+  `<div class="log-token fott-card" data-card-id="${cardId}"></div>`;

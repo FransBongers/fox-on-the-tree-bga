@@ -50,8 +50,9 @@ class UseActionToken extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
   public function argsUseActionToken()
   {
     $info = $this->ctx->getInfo();
+    $playerId = $this->ctx->getPlayerId();
 
-    $options = $this->getOptions();
+    $options = $this->getOptions($playerId);
 
     $data = [
       'options' => $options,
@@ -103,7 +104,7 @@ class UseActionToken extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
       return;
     }
 
-    $options = $this->getOptions();
+    $options = $this->getOptions($player->getId());
 
     if (!array_key_exists($tokenType, $options)) {
       throw new \feException("ERROR_001");
@@ -137,9 +138,9 @@ class UseActionToken extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
   //  .##.....##....##.....##..##........##.....##.......##...
   //  ..#######.....##....####.########.####....##.......##...
 
-  private function getOptions()
+  public function getOptions($playerId)
   {
-    $playerId = $this->ctx->getPlayerId();
+
 
     $availableActionsTokens = ActionTokens::getInLocation(Locations::actionTokens($playerId));
 
