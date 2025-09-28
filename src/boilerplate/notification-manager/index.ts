@@ -217,8 +217,6 @@ class NotificationManager {
 
     const board = Board.getInstance();
 
-    console.log(board.actionTokenStocks);
-
     await board.actionTokenStocks[actionToken.location].addCard(actionToken);
   }
 
@@ -226,11 +224,20 @@ class NotificationManager {
     const { animal, animalToken, phase } = notif.args;
     const board = Board.getInstance();
 
+    const fromElement = document.getElementById(animal.id);
+
+    const removeElement = async () => {
+      await Interaction.use().wait(2);
+      this.game.animalManager.removeCard(animal);
+    };
+
     await Promise.all([
-      Board.getInstance().setAsideStandees.addCard(animal),
+      // Board.getInstance().setAsideStandees.addCard(animal),
       PointsTracker.getInstance().tokenSpots[animalToken.location].addCard(
-        animalToken
+        animalToken,
+        { fromElement }
       ),
+      removeElement(),
     ]);
   }
 

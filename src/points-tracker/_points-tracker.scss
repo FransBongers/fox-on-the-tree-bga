@@ -10,8 +10,8 @@
   align-items: center;
 
   #fott-points-tracker-dial {
-    width: calc(var(--pointsTrackerScale) * 500px);
-    height: calc(var(--pointsTrackerScale) * 500px);
+    width: calc(var(--pointsTrackerScale) * 400px);
+    height: calc(var(--pointsTrackerScale) * 400px);
     aspect-ratio: 1 / 1;
     background-image: url('img/point_counter.png');
     background-size: 100% 100%;

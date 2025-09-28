@@ -104,13 +104,26 @@ span[style*='color:#c0c0c0'] {
   --iconScale: 0.75;
   --tokenScale: 0.6;
   --tileScale: 0.25;
+  display: inline-flex;
 
   .fott-action-token {
-    --tokenScale: 0.695;
+    --tokenScale: 0.534;
   }
 
   .fott-animal {
-    --tokenScale: 0.525;
+    --tokenScale: 0.4;
+  }
+
+  .fott-button {
+    display: flex;
+    padding-bottom: 9px;
+    align-items: center;
+
+    // padding: 6px 18px 6px 18px;
+  }
+
+  .skip-button {
+    padding: 6px 18px 6px 18px;
   }
 }
 

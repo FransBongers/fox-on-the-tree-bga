@@ -97,6 +97,7 @@ class Escape implements State {
           skip: true,
         });
       },
+      extraClasses: 'fott-button',
     });
   }
 

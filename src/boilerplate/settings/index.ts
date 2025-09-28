@@ -77,10 +77,10 @@ class Settings {
 
   // Setup functions
   setup({ gamedatas }: { gamedatas: GamedatasAlias }) {
-    this.addButton({ gamedatas });
+    // this.addButton({ gamedatas });
     this.setupModal({ gamedatas });
     this.setupModalContent();
-    this.changeTab({ id: this.selectedTab });
+    // this.changeTab({ id: this.selectedTab });
 
     dojo.connect($(`show_settings`), 'onclick', () => this.open());
     this.tabs.forEach(({ id }) => {

@@ -73,7 +73,7 @@ class ResolveConflict extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
       $result = FARM_ANIMALS_OUTNUMBER;
       $eliminatedAnimals = $predators;
       $winningAnimals = $farmAnimals;
-    } else if ($previousTileHasFarmAnimal) {
+    } else if (count($predators) === 1 && count($farmAnimals) && $previousTileHasFarmAnimal) {
       $result = FARM_ANIMAL_ON_PREVIOUS_TILE;
       $eliminatedAnimals = $predators;
       $winningAnimals = $farmAnimals;

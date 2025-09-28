@@ -35,10 +35,10 @@
 .fott-action-token-container.selectable {
   .fott-action-token {
     cursor: pointer;
-    filter: drop-shadow(2px 0px 0px base.$selectable-color)
-      drop-shadow(-2px 0px 0px base.$selectable-color)
-      drop-shadow(0px 2px 0px base.$selectable-color)
-      drop-shadow(0px -2px 0px base.$selectable-color);
+    filter: drop-shadow(4px 0px 0px base.$selectable-color)
+      drop-shadow(-4px 0px 0px base.$selectable-color)
+      drop-shadow(0px 4px 0px base.$selectable-color)
+      drop-shadow(0px -4px 0px base.$selectable-color);
   }
 }
 
@@ -46,10 +46,10 @@
 .fott-action-token-container.selected {
   .fott-action-token {
     cursor: pointer;
-    filter: drop-shadow(2px 0px 0px base.$selected-color)
-      drop-shadow(-2px 0px 0px base.$selected-color)
-      drop-shadow(0px 2px 0px base.$selected-color)
-      drop-shadow(0px -2px 0px base.$selected-color);
+    filter: drop-shadow(4px 0px 0px base.$selected-color)
+      drop-shadow(-4px 0px 0px base.$selected-color)
+      drop-shadow(0px 4px 0px base.$selected-color)
+      drop-shadow(0px -4px 0px base.$selected-color);
   }
 }
 

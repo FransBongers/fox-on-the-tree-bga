@@ -2332,14 +2332,16 @@ var Interaction = (function () {
             });
         }
     };
-    Interaction.prototype.addUndoButtons = function (_a) {
+    Interaction.prototype.addUndoButtons = function (_a, filter) {
         var _this = this;
         var previousSteps = _a.previousSteps, previousEngineChoices = _a.previousEngineChoices;
+        if (filter === void 0) { filter = 'both'; }
         var lastStep = Math.max.apply(Math, __spreadArray([0], previousSteps, false));
-        if (lastStep > 0) {
+        if (lastStep > 0 && ['both', 'undo'].includes(filter)) {
             this.addDangerActionButton({
                 id: 'undo_last_step_btn',
                 text: _('Undo last step'),
+                extraClasses: 'fott-button',
                 callback: function () {
                     _this.game.framework().bgaPerformAction('actUndoToStep', {
                         stepId: lastStep,
@@ -2347,7 +2349,7 @@ var Interaction = (function () {
                 },
             });
         }
-        if (previousEngineChoices > 0) {
+        if (previousEngineChoices > 0 && ['both', 'restart'].includes(filter)) {
             this.addDangerActionButton({
                 id: 'restart_btn',
                 text: _('Restart turn'),
@@ -2876,7 +2878,6 @@ var NotificationManager = (function () {
                     case 0:
                         _a = notif.args, playerId = _a.playerId, actionToken = _a.actionToken, tileId = _a.tileId;
                         board = Board.getInstance();
-                        console.log(board.actionTokenStocks);
                         return [4, board.actionTokenStocks[actionToken.location].addCard(actionToken)];
                     case 1:
                         _b.sent();
@@ -2887,15 +2888,28 @@ var NotificationManager = (function () {
     };
     NotificationManager.prototype.notif_scorePoints = function (notif) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, animal, animalToken, phase, board;
+            var _a, animal, animalToken, phase, board, fromElement, removeElement;
+            var _this = this;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         _a = notif.args, animal = _a.animal, animalToken = _a.animalToken, phase = _a.phase;
                         board = Board.getInstance();
+                        fromElement = document.getElementById(animal.id);
+                        removeElement = function () { return __awaiter(_this, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4, Interaction.use().wait(2)];
+                                    case 1:
+                                        _a.sent();
+                                        this.game.animalManager.removeCard(animal);
+                                        return [2];
+                                }
+                            });
+                        }); };
                         return [4, Promise.all([
-                                Board.getInstance().setAsideStandees.addCard(animal),
-                                PointsTracker.getInstance().tokenSpots[animalToken.location].addCard(animalToken),
+                                PointsTracker.getInstance().tokenSpots[animalToken.location].addCard(animalToken, { fromElement: fromElement }),
+                                removeElement(),
                             ])];
                     case 1:
                         _b.sent();
@@ -3072,10 +3086,8 @@ var Settings = (function () {
     Settings.prototype.setup = function (_a) {
         var _this = this;
         var gamedatas = _a.gamedatas;
-        this.addButton({ gamedatas: gamedatas });
         this.setupModal({ gamedatas: gamedatas });
         this.setupModalContent();
-        this.changeTab({ id: this.selectedTab });
         dojo.connect($("show_settings"), 'onclick', function () { return _this.open(); });
         this.tabs.forEach(function (_a) {
             var id = _a.id;
@@ -3314,7 +3326,7 @@ var ConfirmPartialTurn = (function () {
         addConfirmButton(function () {
             return _this.game.framework().bgaPerformAction('actConfirmPartialTurn');
         });
-        addUndoButtons(this.args);
+        addUndoButtons(this.args, 'restart');
     };
     return ConfirmPartialTurn;
 }());
@@ -3349,7 +3361,7 @@ var ConfirmTurn = (function () {
         addConfirmButton(function () {
             return _this.game.framework().bgaPerformAction('actConfirmTurn');
         });
-        addUndoButtons(this.args);
+        addUndoButtons(this.args, 'restart');
     };
     return ConfirmTurn;
 }());
@@ -3424,8 +3436,9 @@ var addPassButton = function (optionalAction, text) {
 var addPlayerButton = function (props) { return Interaction.use().addPlayerButton(props); };
 var addPrimaryActionButton = function (props) { return Interaction.use().addPrimaryActionButton(props); };
 var addSecondaryActionButton = function (props) { return Interaction.use().addSecondaryActionButton(props); };
-var addUndoButtons = function (props) {
-    Interaction.use().addUndoButtons(props);
+var addUndoButtons = function (props, filter) {
+    if (filter === void 0) { filter = 'both'; }
+    Interaction.use().addUndoButtons(props, filter);
 };
 var clearPossible = function () {
     Interaction.use().clearPossible();
@@ -3484,6 +3497,7 @@ var FoxOnTheTree = (function () {
         this._selectableNodes = [];
         this.mobileVersion = false;
         this.loadingComplete = false;
+        this.setupDone = false;
         this.states = {
             ConfirmPartialTurn: ConfirmPartialTurn,
             ConfirmTurn: ConfirmTurn,
@@ -3497,7 +3511,7 @@ var FoxOnTheTree = (function () {
         var _this = this;
         var body = document.getElementById('ebd-body');
         this.mobileVersion = body && body.classList.contains('mobile_version');
-        dojo.place("<div id='customActions' style='display:inline-block'></div>", $('generalactions'), 'after');
+        dojo.place("<div id='customActions'></div>", $('generalactions'), 'after');
         document
             .getElementById('game_play_area')
             .insertAdjacentHTML('afterbegin', tplPlayArea());
@@ -3509,13 +3523,8 @@ var FoxOnTheTree = (function () {
         debug('game', this);
         this._connections = [];
         Object.values(this.states).forEach(function (state) { return state.create(_this); });
-        InfoPanel.create(this);
-        Settings.create(this);
-        var settings = Settings.getInstance();
         this.animationManager = new AnimationManager(this, {
-            duration: settings.get(PREF_SHOW_ANIMATIONS) === DISABLED
-                ? 0
-                : 2100 - settings.get(PREF_ANIMATION_SPEED),
+            duration: 500,
         });
         this.actionTokenManager = new ActionTokenManager(this);
         this.animalManager = new AnimalManager(this);
@@ -3527,6 +3536,7 @@ var FoxOnTheTree = (function () {
         Board.create(this);
         PointsTracker.create(this);
         NotificationManager.getInstance().setupNotifications();
+        this.setupDone = true;
         debug('Ending game setup');
     };
     FoxOnTheTree.prototype.setupPlayerOrder = function (playerOrder) {
@@ -3663,8 +3673,7 @@ var FoxOnTheTree = (function () {
         var stepId = _a.stepId;
     };
     FoxOnTheTree.prototype.updateLayout = function () {
-        var settings = Settings.getInstance();
-        if (!Settings.getInstance()) {
+        if (!this.setupDone) {
             return;
         }
         var ROOT = document.documentElement;
@@ -3673,7 +3682,6 @@ var FoxOnTheTree = (function () {
         var LEFT_SIZE = WIDTH;
         var leftColumnScale = LEFT_SIZE / LEFT_COLUMN;
         ROOT.style.setProperty('--leftColumnScale', "".concat(leftColumnScale));
-        ROOT.style.setProperty('--tileSizeMultiplier', "".concat(Number(settings.get(PREF_TILE_SIZE)) / 100));
     };
     FoxOnTheTree.prototype.onAddingNewUndoableStepToLog = function (notif) {
         var _this = this;
@@ -3788,11 +3796,9 @@ var FoxOnTheTree = (function () {
     FoxOnTheTree.prototype.updatePlayerOrdering = function () {
         this.framework().inherited(arguments);
         var container = document.getElementById('player_boards');
-        var infoPanel = document.getElementById('info-panel');
         if (!container) {
             return;
         }
-        container.insertAdjacentElement('afterbegin', infoPanel);
     };
     FoxOnTheTree.prototype.actionError = function (actionName) {
         this.framework().showMessage("cannot take ".concat(actionName, " action"), 'error');
@@ -3883,6 +3889,8 @@ var ANIMAL_POSITIONS = [
 var getAnimalPosition = function (index, totalOnTile) {
     return ANIMAL_POSITIONS[totalOnTile][index];
 };
+var ZOOM_LEVELS = [1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4];
+var LOCAL_STORAGE_ZOOM_KEY = 'FoxOnTheTree-zoom';
 var Board = (function () {
     function Board(game) {
         this.actionTokenStocks = {};
@@ -3921,15 +3929,14 @@ var Board = (function () {
                 board: document.getElementById('fott-board'),
                 selectBoxes: document.getElementById('fott-select-boxes'),
                 tiles: {},
-                setAsideStandees: document.getElementById('fott-set-aside-standees'),
             },
             animals: {},
             selectBoxes: {},
         };
         this.setupTiles();
-        this.setupSetAsideStandees();
         this.setupAnimals(gamedatas);
         this.setupActionTokens(gamedatas);
+        this.setupZoomControls();
     };
     Board.prototype.setupTiles = function () {
         var _this = this;
@@ -3940,9 +3947,6 @@ var Board = (function () {
             actionTokenSlot.id = "action-token-slot-".concat(tileId);
             _this.ui.containers.tiles[tileId].appendChild(actionTokenSlot);
         });
-    };
-    Board.prototype.setupSetAsideStandees = function () {
-        this.setAsideStandees = new LineStock(this.game.animalManager, this.ui.containers.setAsideStandees, {});
     };
     Board.prototype.animalDisplay = function (element, cards, lastCard, stock) {
         cards.forEach(function (animal, index) {
@@ -3968,15 +3972,54 @@ var Board = (function () {
         });
         this.updateActionTokens(gamedatas);
     };
+    Board.prototype.setupZoomControls = function () {
+        var _this = this;
+        var index = this.changeZoomLevel(0);
+        var zoomInButton = document.getElementById('fott-zoom-in-btn');
+        var zoomOutButton = document.getElementById('fott-zoom-out-btn');
+        zoomInButton.addEventListener('click', function () {
+            var index = _this.changeZoomLevel(1);
+            if (index === ZOOM_LEVELS.length - 1) {
+                zoomInButton.classList.add('disabled');
+            }
+            zoomOutButton.classList.remove('disabled');
+        });
+        zoomOutButton.addEventListener('click', function () {
+            var index = _this.changeZoomLevel(-1);
+            if (index === 0) {
+                zoomOutButton.classList.add('disabled');
+            }
+            zoomInButton.classList.remove('disabled');
+        });
+        if (index === 0) {
+            zoomOutButton.classList.add('disabled');
+        }
+        if (index === ZOOM_LEVELS.length - 1) {
+            zoomInButton.classList.add('disabled');
+        }
+    };
+    Board.prototype.changeZoomLevel = function (change) {
+        var _a;
+        var currentZoom = (_a = Number(localStorage.getItem(LOCAL_STORAGE_ZOOM_KEY))) !== null && _a !== void 0 ? _a : 1;
+        var index = ZOOM_LEVELS.indexOf(currentZoom);
+        index = index < 0 ? 0 : index;
+        var newIndex = index + change;
+        newIndex = newIndex < 0 ? 0 : newIndex;
+        newIndex =
+            newIndex >= ZOOM_LEVELS.length ? ZOOM_LEVELS.length - 1 : newIndex;
+        var newZoomLevel = ZOOM_LEVELS[newIndex];
+        document.documentElement.style.setProperty('--tileSizeMultiplier', "".concat(newZoomLevel));
+        localStorage.setItem(LOCAL_STORAGE_ZOOM_KEY, "".concat(newZoomLevel));
+        return newIndex;
+    };
+    Board.prototype.checkButtonsDisabled = function () {
+    };
     Board.prototype.updateAnimals = function (gamedatas) {
         var _this = this;
         Object.entries(gamedatas.animals).forEach(function (_a) {
             var id = _a[0], animal = _a[1];
             if (TILES.includes(animal.location)) {
                 _this.animalStocks[animal.location].addCard(animal);
-            }
-            else if (animal.location === SET_ASIDE_STANDEES) {
-                _this.setAsideStandees.addCard(animal);
             }
         });
     };
@@ -3992,18 +4035,11 @@ var Board = (function () {
                                     switch (_a.label) {
                                         case 0:
                                             if (!TILES.includes(animal.location)) return [3, 2];
-                                            console.log('add to tile');
                                             return [4, this.animalStocks[animal.location].addCard(animal)];
                                         case 1:
                                             _a.sent();
-                                            return [3, 4];
-                                        case 2:
-                                            if (!(animal.location === SET_ASIDE_STANDEES)) return [3, 4];
-                                            return [4, this.setAsideStandees.addCard(animal)];
-                                        case 3:
-                                            _a.sent();
-                                            _a.label = 4;
-                                        case 4: return [2];
+                                            _a.label = 2;
+                                        case 2: return [2];
                                     }
                                 });
                             }); }))];
@@ -4053,7 +4089,7 @@ var Board = (function () {
     };
     return Board;
 }());
-var tplBoard = function (gamedatas) { return "<div id=\"fott-board\">\n  <div id=\"fott-tiles\">\n    <div id=\"Farm\" class=\"fott-tile\" data-tile-id=\"Farm\"></div>  \n    <div id=\"Tile01\" class=\"fott-tile\" data-tile-id=\"Tile01\"></div>\n    <div id=\"Tile02\" class=\"fott-tile\" data-tile-id=\"Tile02\"></div>\n    <div id=\"Tile03\" class=\"fott-tile\" data-tile-id=\"Tile03\"></div>\n    <div id=\"Tile04\" class=\"fott-tile\" data-tile-id=\"Tile04\"></div>\n    <div id=\"Tile05\" class=\"fott-tile\" data-tile-id=\"Tile05\"></div>\n    <div id=\"Tile06\" class=\"fott-tile\" data-tile-id=\"Tile06\"></div>\n    <div id=\"Tile07\" class=\"fott-tile\" data-tile-id=\"Tile07\"></div>\n    <div id=\"Tile08\" class=\"fott-tile\" data-tile-id=\"Tile08\"></div>\n    <div id=\"LairOfPredators\" class=\"fott-tile\" data-tile-id=\"LairOfPredators\"></div>\n  </div>\n  <div id=\"fott-select-boxes\"></div>\n  <div id=\"fott-set-aside-standees\"></div>\n</div>"; };
+var tplBoard = function (gamedatas) { return "\n<div id=\"fott-board\">\n  <div id=\"fott-zoom-controls\">\n    <button id=\"fott-zoom-out-btn\" type=\"button\" class=\"fott-zoom-out-icon\"></button>\n    <button id=\"fott-zoom-in-btn\" type=\"button\" class=\"fott-zoom-in-icon\"></button>\n  </div>\n  <div id=\"fott-tiles-wrapper\">\n    <div id=\"fott-tiles\">\n      <div id=\"Farm\" class=\"fott-tile\" data-tile-id=\"Farm\"></div>  \n      <div id=\"Tile01\" class=\"fott-tile\" data-tile-id=\"Tile01\"></div>\n      <div id=\"Tile02\" class=\"fott-tile\" data-tile-id=\"Tile02\"></div>\n      <div id=\"Tile03\" class=\"fott-tile\" data-tile-id=\"Tile03\"></div>\n      <div id=\"Tile04\" class=\"fott-tile\" data-tile-id=\"Tile04\"></div>\n      <div id=\"Tile05\" class=\"fott-tile\" data-tile-id=\"Tile05\"></div>\n      <div id=\"Tile06\" class=\"fott-tile\" data-tile-id=\"Tile06\"></div>\n      <div id=\"Tile07\" class=\"fott-tile\" data-tile-id=\"Tile07\"></div>\n      <div id=\"Tile08\" class=\"fott-tile\" data-tile-id=\"Tile08\"></div>\n      <div id=\"LairOfPredators\" class=\"fott-tile\" data-tile-id=\"LairOfPredators\"></div>\n    </div>\n  </div>\n</div>"; };
 var LOG_TOKEN_BOLD_TEXT = 'boldText';
 var LOG_TOKEN_BOLD_ITALIC_TEXT = 'boldItalicText';
 var LOG_TOKEN_NEW_LINE = 'newLine';
@@ -4395,29 +4431,24 @@ var TakeAction = (function () {
                 _this.updateInterfaceConfirmSwampRescue(token);
             });
         });
-        addUndoButtons(this.args);
+        addUndoButtons(this.args, 'undo');
     };
     TakeAction.prototype.updateInterfaceSelectAnimalToMove = function () {
         var _this = this;
         this.game.clearPossible();
-        updatePageTitle(_('${you} must choose:'), {});
-        Object.entries(this.args.animals).forEach(function (_a) {
-            var animalId = _a[0], moveOptions = _a[1];
-            addSecondaryActionButton({
-                id: "move-".concat(animalId, "-btn"),
-                text: formatStringRecursive(_('Move ${tkn_animal}'), {
-                    tkn_animal: animalId,
-                }),
-                callback: function () { return _this.updateInterfaceSelectTile(moveOptions); },
-            });
-        });
+        updatePageTitle(_('${you} must choose an animal to move'), {});
         Object.values(this.args.animals).forEach(function (moveOptions) {
             var animal = moveOptions.animal;
             onClick(document.getElementById(animal.id), function () {
                 _this.updateInterfaceSelectTile(moveOptions);
             });
         });
-        addCancelButton();
+        if (this.canSwampRescue()) {
+            addCancelButton();
+        }
+        else {
+            addUndoButtons(this.args, 'undo');
+        }
     };
     TakeAction.prototype.updateInterfaceSelectSwampToken = function () {
         var _this = this;
@@ -4430,7 +4461,12 @@ var TakeAction = (function () {
                 _this.updateInterfaceConfirmSwampRescue(token);
             });
         });
-        addCancelButton();
+        if (this.canMoveAnimal()) {
+            addCancelButton();
+        }
+        else {
+            addUndoButtons(this.args, 'undo');
+        }
     };
     TakeAction.prototype.updateInterfaceSelectTile = function (moveOptions) {
         var _this = this;
@@ -4462,20 +4498,14 @@ var TakeAction = (function () {
         });
         setSelected(tileId);
         var callback = function () {
-            return performAction('actTakeAction', {
+            performAction('actTakeAction', {
                 actionType: MOVE,
                 animalId: animal.id,
                 tileId: tileId,
                 actionTokenId: null,
             });
         };
-        if (Settings.getInstance().get(PREF_CONFIRM_END_OF_TURN_AND_PLAYER_SWITCH_ONLY) === PREF_ENABLED) {
-            callback();
-        }
-        else {
-            addConfirmButton(callback);
-        }
-        addCancelButton();
+        callback();
     };
     TakeAction.prototype.updateInterfaceConfirmSwampRescue = function (actionToken) {
         clearPossible();
@@ -4492,13 +4522,7 @@ var TakeAction = (function () {
                 actionTokenId: actionToken.id,
             });
         };
-        if (Settings.getInstance().get(PREF_CONFIRM_END_OF_TURN_AND_PLAYER_SWITCH_ONLY) === PREF_ENABLED) {
-            callback();
-        }
-        else {
-            addConfirmButton(callback);
-        }
-        addCancelButton();
+        callback();
     };
     TakeAction.prototype.canMoveAnimal = function () {
         return Object.keys(this.args.animals).length > 0;
@@ -4560,6 +4584,7 @@ var UseActionToken = (function () {
                     target: null,
                 });
             },
+            extraClasses: 'fott-button skip-button',
         });
     };
     UseActionToken.prototype.updateInterfaceSelectOption = function (tokenType) {
@@ -4664,6 +4689,7 @@ var Escape = (function () {
                     skip: true,
                 });
             },
+            extraClasses: 'fott-button',
         });
     };
     Escape.prototype.updateInterfaceSelectAnimal = function () {

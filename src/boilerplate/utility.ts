@@ -52,8 +52,8 @@ const addSecondaryActionButton = (props: {
   extraClasses?: string;
 }) => Interaction.use().addSecondaryActionButton(props);
 
-const addUndoButtons = (props: CommonStateArgs) => {
-  Interaction.use().addUndoButtons(props);
+const addUndoButtons = (props: CommonStateArgs, filter = 'both') => {
+  Interaction.use().addUndoButtons(props, filter);
 };
 
 const clearPossible = () => {

@@ -1,3 +1,6 @@
+const ZOOM_LEVELS = [1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4];
+const LOCAL_STORAGE_ZOOM_KEY = 'FoxOnTheTree-zoom';
+
 class Board {
   private static instance: Board;
   private game: GameAlias;
@@ -7,14 +10,14 @@ class Board {
       board: HTMLElement;
       selectBoxes: HTMLElement;
       tiles: Record<string, HTMLElement>;
-      setAsideStandees: HTMLElement;
+      // setAsideStandees: HTMLElement;
     };
     animals: Record<string, HTMLElement>;
     selectBoxes: Record<string, HTMLElement>;
   };
   public actionTokenStocks: Record<string, LineStock<FottActionToken>> = {};
   public animalStocks: Record<string, FottManualPositionStock<FottAnimal>> = {};
-  public setAsideStandees: LineStock<FottAnimal>;
+  // public setAsideStandees: LineStock<FottAnimal>;
 
   constructor(game: GameAlias) {
     this.game = game;
@@ -65,16 +68,17 @@ class Board {
         board: document.getElementById('fott-board'),
         selectBoxes: document.getElementById('fott-select-boxes'),
         tiles: {},
-        setAsideStandees: document.getElementById('fott-set-aside-standees'),
+        // setAsideStandees: document.getElementById('fott-set-aside-standees'),
       },
       animals: {},
       selectBoxes: {},
     };
     this.setupTiles();
-    this.setupSetAsideStandees();
+    // this.setupSetAsideStandees();
 
     this.setupAnimals(gamedatas);
     this.setupActionTokens(gamedatas);
+    this.setupZoomControls();
   }
 
   private setupTiles() {
@@ -87,13 +91,13 @@ class Board {
     });
   }
 
-  private setupSetAsideStandees() {
-    this.setAsideStandees = new LineStock<FottAnimal>(
-      this.game.animalManager,
-      this.ui.containers.setAsideStandees,
-      {}
-    );
-  }
+  // private setupSetAsideStandees() {
+  //   this.setAsideStandees = new LineStock<FottAnimal>(
+  //     this.game.animalManager,
+  //     this.ui.containers.setAsideStandees,
+  //     {}
+  //   );
+  // }
 
   private animalDisplay(
     element: HTMLElement,
@@ -142,6 +146,62 @@ class Board {
     this.updateActionTokens(gamedatas);
   }
 
+  private setupZoomControls() {
+    const index = this.changeZoomLevel(0);
+    const zoomInButton = document.getElementById('fott-zoom-in-btn');
+    const zoomOutButton = document.getElementById('fott-zoom-out-btn');
+
+    zoomInButton.addEventListener('click', () => {
+      const index = this.changeZoomLevel(1);
+      if (index === ZOOM_LEVELS.length - 1) {
+        zoomInButton.classList.add('disabled');
+      }
+      zoomOutButton.classList.remove('disabled');
+    });
+
+    zoomOutButton.addEventListener('click', () => {
+      const index = this.changeZoomLevel(-1);
+      if (index === 0) {
+        zoomOutButton.classList.add('disabled');
+      }
+      zoomInButton.classList.remove('disabled');
+    });
+    if (index === 0) {
+      zoomOutButton.classList.add('disabled');
+    }
+    if (index === ZOOM_LEVELS.length - 1) {
+      zoomInButton.classList.add('disabled');
+    }
+  }
+
+  private changeZoomLevel(change: number) {
+    const currentZoom =
+      Number(localStorage.getItem(LOCAL_STORAGE_ZOOM_KEY)) ?? 1;
+
+    let index = ZOOM_LEVELS.indexOf(currentZoom);
+    index = index < 0 ? 0 : index;
+
+    let newIndex = index + change;
+
+    newIndex = newIndex < 0 ? 0 : newIndex;
+    newIndex =
+      newIndex >= ZOOM_LEVELS.length ? ZOOM_LEVELS.length - 1 : newIndex;
+
+    const newZoomLevel = ZOOM_LEVELS[newIndex];
+    document.documentElement.style.setProperty(
+      '--tileSizeMultiplier',
+      `${newZoomLevel}`
+    );
+
+    localStorage.setItem(LOCAL_STORAGE_ZOOM_KEY, `${newZoomLevel}`);
+
+    return newIndex;
+  }
+
+  private checkButtonsDisabled() {
+
+  }
+
   // .##.....##.########..########.....###....########.########....##.....##.####
   // .##.....##.##.....##.##.....##...##.##......##....##..........##.....##..##.
   // .##.....##.##.....##.##.....##..##...##.....##....##..........##.....##..##.
@@ -154,9 +214,10 @@ class Board {
     Object.entries(gamedatas.animals).forEach(([id, animal]) => {
       if (TILES.includes(animal.location)) {
         this.animalStocks[animal.location].addCard(animal);
-      } else if (animal.location === SET_ASIDE_STANDEES) {
-        this.setAsideStandees.addCard(animal);
       }
+      // else if (animal.location === SET_ASIDE_STANDEES) {
+      //   this.setAsideStandees.addCard(animal);
+      // }
     });
   }
 
@@ -165,11 +226,11 @@ class Board {
     await Promise.all(
       Object.values(gamedatas.animals).map(async (animal) => {
         if (TILES.includes(animal.location)) {
-          console.log('add to tile');
           await this.animalStocks[animal.location].addCard(animal);
-        } else if (animal.location === SET_ASIDE_STANDEES) {
-          await this.setAsideStandees.addCard(animal);
         }
+        // else if (animal.location === SET_ASIDE_STANDEES) {
+        //   await this.setAsideStandees.addCard(animal);
+        // }
       })
     );
   }

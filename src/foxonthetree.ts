@@ -59,6 +59,7 @@ class FoxOnTheTree implements Game {
   public actionTokenManager: ActionTokenManager;
   public animalManager: AnimalManager;
   public animalTokenManager: AnimalTokenManager;
+  private setupDone: boolean = false;
 
   private states = {
     ConfirmPartialTurn,
@@ -84,11 +85,7 @@ class FoxOnTheTree implements Game {
     this.mobileVersion = body && body.classList.contains('mobile_version');
 
     // Create a new div for buttons to avoid BGA auto clearing it
-    dojo.place(
-      "<div id='customActions' style='display:inline-block'></div>",
-      $('generalactions'),
-      'after'
-    );
+    dojo.place("<div id='customActions'></div>", $('generalactions'), 'after');
 
     document
       .getElementById('game_play_area')
@@ -108,18 +105,15 @@ class FoxOnTheTree implements Game {
 
     Object.values(this.states).forEach((state) => state.create(this));
 
-    InfoPanel.create(this);
+    // InfoPanel.create(this);
 
     //  this.tooltipManager = new TooltipManager(this);
-    Settings.create(this);
-    const settings = Settings.getInstance();
+    // Settings.create(this);
+    // const settings = Settings.getInstance();
     //  this.informationModal = new InformationModal(this);
 
     this.animationManager = new AnimationManager(this, {
-      duration:
-        settings.get(PREF_SHOW_ANIMATIONS) === DISABLED
-          ? 0
-          : 2100 - (settings.get(PREF_ANIMATION_SPEED) as number),
+      duration: 500,
     });
     this.actionTokenManager = new ActionTokenManager(this);
     this.animalManager = new AnimalManager(this);
@@ -135,7 +129,7 @@ class FoxOnTheTree implements Game {
     // Tokens.create(this);
 
     NotificationManager.getInstance().setupNotifications();
-
+    this.setupDone = true;
     //  this.tooltipManager.setupTooltips();
     debug('Ending game setup');
   }
@@ -462,9 +456,7 @@ class FoxOnTheTree implements Game {
   }
 
   public updateLayout() {
-    const settings = Settings.getInstance();
-
-    if (!Settings.getInstance()) {
+    if (!this.setupDone) {
       return;
     }
 
@@ -498,10 +490,10 @@ class FoxOnTheTree implements Game {
     const leftColumnScale = LEFT_SIZE / LEFT_COLUMN;
     ROOT.style.setProperty('--leftColumnScale', `${leftColumnScale}`);
 
-    ROOT.style.setProperty(
-      '--tileSizeMultiplier',
-      `${Number(settings.get(PREF_TILE_SIZE)) / 100}`
-    );
+    // ROOT.style.setProperty(
+    //   '--tileSizeMultiplier',
+    //   `${100 / 100}`
+    // );
 
     // ROOT.style.setProperty(
     //   '--mapSizeMultiplier',
@@ -711,12 +703,12 @@ class FoxOnTheTree implements Game {
     this.framework().inherited(arguments);
     // TODO: Update for mobile mode
     const container = document.getElementById('player_boards');
-    const infoPanel = document.getElementById('info-panel');
+    // const infoPanel = document.getElementById('info-panel');
 
     if (!container) {
       return;
     }
-    container.insertAdjacentElement('afterbegin', infoPanel);
+    // container.insertAdjacentElement('afterbegin', infoPanel);
   }
 
   //  setAlwaysFixTopActions(alwaysFixed = true, maximum = 30) {

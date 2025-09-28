@@ -149,13 +149,14 @@ class Interaction {
   public addUndoButtons({
     previousSteps,
     previousEngineChoices,
-  }: CommonStateArgs) {
+  }: CommonStateArgs, filter = 'both') {
     const lastStep = Math.max(0, ...previousSteps);
-    if (lastStep > 0) {
+    if (lastStep > 0 && ['both', 'undo'].includes(filter)) {
       // this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), () => this.undoToStep(lastStep), 'restartAction');
       this.addDangerActionButton({
         id: 'undo_last_step_btn',
         text: _('Undo last step'),
+        extraClasses: 'fott-button',
         callback: () => {
           this.game.framework().bgaPerformAction('actUndoToStep', {
             stepId: lastStep,
@@ -172,7 +173,7 @@ class Interaction {
       });
     }
 
-    if (previousEngineChoices > 0) {
+    if (previousEngineChoices > 0 && ['both', 'restart'].includes(filter)) {
       this.addDangerActionButton({
         id: 'restart_btn',
         text: _('Restart turn'),

@@ -58,7 +58,7 @@ class ConfirmTurn implements State {
     addConfirmButton(() =>
       this.game.framework().bgaPerformAction('actConfirmTurn')
     );
-    addUndoButtons(this.args);
+    addUndoButtons(this.args, 'restart');
   }
 
   //  .##.....##.########.####.##.......####.########.##....##

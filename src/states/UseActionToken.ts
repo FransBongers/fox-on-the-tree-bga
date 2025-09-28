@@ -83,6 +83,7 @@ class UseActionToken implements State {
           target: null,
         });
       },
+      extraClasses: 'fott-button skip-button',
     });
   }
 

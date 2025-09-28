@@ -99,30 +99,34 @@ class TakeAction implements State {
       });
     });
 
-    addUndoButtons(this.args);
+    addUndoButtons(this.args, 'undo');
   }
 
   updateInterfaceSelectAnimalToMove() {
     this.game.clearPossible();
 
-    updatePageTitle(_('${you} must choose:'), {});
+    updatePageTitle(_('${you} must choose an animal to move'), {});
 
-    Object.entries(this.args.animals).forEach(([animalId, moveOptions]) => {
-      addSecondaryActionButton({
-        id: `move-${animalId}-btn`,
-        text: formatStringRecursive(_('Move ${tkn_animal}'), {
-          tkn_animal: animalId,
-        }),
-        callback: () => this.updateInterfaceSelectTile(moveOptions),
-      });
-    });
+    // Object.entries(this.args.animals).forEach(([animalId, moveOptions]) => {
+    //   addSecondaryActionButton({
+    //     id: `move-${animalId}-btn`,
+    //     text: formatStringRecursive(_('Move ${tkn_animal}'), {
+    //       tkn_animal: animalId,
+    //     }),
+    //     callback: () => this.updateInterfaceSelectTile(moveOptions),
+    //   });
+    // });
     Object.values(this.args.animals).forEach((moveOptions) => {
       const { animal } = moveOptions;
       onClick(document.getElementById(animal.id), () => {
         this.updateInterfaceSelectTile(moveOptions);
       });
     });
-    addCancelButton();
+    if (this.canSwampRescue()) {
+      addCancelButton();
+    } else {
+      addUndoButtons(this.args, 'undo');
+    }
   }
 
   updateInterfaceSelectSwampToken() {
@@ -137,7 +141,11 @@ class TakeAction implements State {
         this.updateInterfaceConfirmSwampRescue(token);
       });
     });
-    addCancelButton();
+    if (this.canMoveAnimal()) {
+      addCancelButton();
+    } else {
+      addUndoButtons(this.args, 'undo');
+    }
   }
 
   private updateInterfaceSelectTile(moveOptions: AnimalMoveOptions) {
@@ -175,25 +183,16 @@ class TakeAction implements State {
     });
     setSelected(tileId);
 
-    const callback = () =>
+    const callback = () => {
       performAction('actTakeAction', {
         actionType: MOVE,
         animalId: animal.id,
         tileId,
         actionTokenId: null,
       });
+    };
 
-    if (
-      Settings.getInstance().get(
-        PREF_CONFIRM_END_OF_TURN_AND_PLAYER_SWITCH_ONLY
-      ) === PREF_ENABLED
-    ) {
-      callback();
-    } else {
-      addConfirmButton(callback);
-    }
-
-    addCancelButton();
+    callback();
   }
 
   private updateInterfaceConfirmSwampRescue(actionToken: FottActionToken) {
@@ -214,17 +213,7 @@ class TakeAction implements State {
         actionTokenId: actionToken.id,
       });
 
-    if (
-      Settings.getInstance().get(
-        PREF_CONFIRM_END_OF_TURN_AND_PLAYER_SWITCH_ONLY
-      ) === PREF_ENABLED
-    ) {
-      callback();
-    } else {
-      addConfirmButton(callback);
-    }
-
-    addCancelButton();
+    callback();
   }
 
   //  .##.....##.########.####.##.......####.########.##....##
