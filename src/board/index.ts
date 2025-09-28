@@ -1,4 +1,4 @@
-const ZOOM_LEVELS = [1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4];
+const ZOOM_LEVELS = [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3];
 const LOCAL_STORAGE_ZOOM_KEY = 'FoxOnTheTree-zoom';
 
 class Board {

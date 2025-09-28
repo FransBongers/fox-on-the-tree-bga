@@ -1361,8 +1361,8 @@ span[style*="color:#c0c0c0"] {
   --tokenScale: var(--leftColumnScale);
   --pointsTrackerScale: var(--leftColumnScale);
   position: relative;
-  width: calc(var(--pointsTrackerScale) * 900px);
-  height: calc(var(--pointsTrackerScale) * 900px);
+  width: calc(var(--pointsTrackerScale) * 800px);
+  height: calc(var(--pointsTrackerScale) * 800px);
   display: flex;
   justify-content: center;
   align-items: center;

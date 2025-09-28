@@ -3,11 +3,12 @@
   --pointsTrackerScale: var(--leftColumnScale);
 
   position: relative;
-  width: calc(var(--pointsTrackerScale) * 900px);
-  height: calc(var(--pointsTrackerScale) * 900px);
+  width: calc(var(--pointsTrackerScale) * 800px);
+  height: calc(var(--pointsTrackerScale) * 800px);
   display: flex;
   justify-content: center;
   align-items: center;
+  // background-color: green;
 
   #fott-points-tracker-dial {
     width: calc(var(--pointsTrackerScale) * 400px);
@@ -22,4 +23,6 @@
   position: absolute;
   width: calc(var(--tokenScale) * 75px);
   aspect-ratio: 302 / 307;
+  // background-color: yellow;
+  // border-radius: 50%;
 }

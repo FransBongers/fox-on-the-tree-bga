@@ -490,6 +490,15 @@ class FoxOnTheTree implements Game {
     const leftColumnScale = LEFT_SIZE / LEFT_COLUMN;
     ROOT.style.setProperty('--leftColumnScale', `${leftColumnScale}`);
 
+    const POINTS_TRACKER_WIDTH = 1000;
+    const pointsTrackerScale = Math.min(LEFT_SIZE / POINTS_TRACKER_WIDTH, 0.8);
+    const pointsTrackerElt = document.getElementById('fott-points-tracker');
+    console.log('pointsTrackerElt:', pointsTrackerElt);
+    console.log('pointsTrackerScale:', pointsTrackerScale);
+    if (pointsTrackerElt) {
+      pointsTrackerElt.style.setProperty('--leftColumnScale', `${pointsTrackerScale}`);
+    }
+
     // ROOT.style.setProperty(
     //   '--tileSizeMultiplier',
     //   `${100 / 100}`

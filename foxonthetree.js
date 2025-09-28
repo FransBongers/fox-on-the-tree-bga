@@ -3682,6 +3682,14 @@ var FoxOnTheTree = (function () {
         var LEFT_SIZE = WIDTH;
         var leftColumnScale = LEFT_SIZE / LEFT_COLUMN;
         ROOT.style.setProperty('--leftColumnScale', "".concat(leftColumnScale));
+        var POINTS_TRACKER_WIDTH = 1000;
+        var pointsTrackerScale = Math.min(LEFT_SIZE / POINTS_TRACKER_WIDTH, 0.8);
+        var pointsTrackerElt = document.getElementById('fott-points-tracker');
+        console.log('pointsTrackerElt:', pointsTrackerElt);
+        console.log('pointsTrackerScale:', pointsTrackerScale);
+        if (pointsTrackerElt) {
+            pointsTrackerElt.style.setProperty('--leftColumnScale', "".concat(pointsTrackerScale));
+        }
     };
     FoxOnTheTree.prototype.onAddingNewUndoableStepToLog = function (notif) {
         var _this = this;
@@ -3889,7 +3897,7 @@ var ANIMAL_POSITIONS = [
 var getAnimalPosition = function (index, totalOnTile) {
     return ANIMAL_POSITIONS[totalOnTile][index];
 };
-var ZOOM_LEVELS = [1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4];
+var ZOOM_LEVELS = [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3];
 var LOCAL_STORAGE_ZOOM_KEY = 'FoxOnTheTree-zoom';
 var Board = (function () {
     function Board(game) {
@@ -4291,22 +4299,22 @@ var tplPlayerPanelInfo = function (playerId) {
 };
 var tplCard = function (cardId) { return "<div class=\"fott-card\" data-card-id=\"".concat(cardId, "\"></div>"); };
 var POINTS_SPOTS_CONFIG = {
-    points_phase1_1: { top: 184, left: 626 },
-    points_phase1_2: { top: 406, left: 716 },
-    points_phase1_3: { top: 634, left: 626 },
-    points_phase1_4: { top: 714, left: 412 },
-    points_phase1_5: { top: 634, left: 198 },
-    points_phase1_6: { top: 406, left: 109 },
-    points_phase1_7: { top: 184, left: 198 },
-    points_phase1_8: { top: 110, left: 412 },
-    points_phase2_1: { top: 114, left: 696 },
-    points_phase2_2: { top: 406, left: 805 },
-    points_phase2_3: { top: 706, left: 696 },
-    points_phase2_4: { top: 806, left: 412 },
-    points_phase2_5: { top: 706, left: 132 },
-    points_phase2_6: { top: 406, left: 20 },
-    points_phase2_7: { top: 114, left: 132 },
-    points_phase2_8: { top: 18, left: 412 },
+    points_phase1_1: { top: 177, left: 537 },
+    points_phase1_2: { top: 356, left: 616 },
+    points_phase1_3: { top: 544, left: 537 },
+    points_phase1_4: { top: 614, left: 362 },
+    points_phase1_5: { top: 544, left: 191 },
+    points_phase1_6: { top: 356, left: 109 },
+    points_phase1_7: { top: 177, left: 191 },
+    points_phase1_8: { top: 110, left: 362 },
+    points_phase2_1: { top: 107, left: 602 },
+    points_phase2_2: { top: 356, left: 705 },
+    points_phase2_3: { top: 618, left: 602 },
+    points_phase2_4: { top: 706, left: 362 },
+    points_phase2_5: { top: 618, left: 132 },
+    points_phase2_6: { top: 356, left: 20 },
+    points_phase2_7: { top: 107, left: 132 },
+    points_phase2_8: { top: 18, left: 362 },
 };
 var PointsTracker = (function () {
     function PointsTracker(game) {
