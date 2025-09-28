@@ -4,6 +4,7 @@ namespace Bga\Games\FoxOnTheTree\Actions;
 
 use Bga\Games\FoxOnTheTree\Boilerplate\Core\Engine;
 use Bga\Games\FoxOnTheTree\Boilerplate\Core\Notifications;
+use Bga\Games\FoxOnTheTree\Boilerplate\Core\Stats;
 use Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Locations;
 use Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Utils;
 use Bga\Games\FoxOnTheTree\Managers\Animals;
@@ -124,6 +125,7 @@ class Escape extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
   {
     $info = $this->ctx->getInfo();
     $options = $this->getOptions(Animals::getMany($info['animalIds']));
+    Stats::setEscapeUsed($player->getId(), 1);
 
     if ($animalId === null || !isset($options[$animalId])) {
       throw new \feException("ERROR_011");

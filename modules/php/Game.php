@@ -27,6 +27,7 @@ require_once("constants.inc.php");
 use Bga\Games\FoxOnTheTree\Boilerplate\Core\Engine;
 
 use Bga\Games\FoxOnTheTree\Boilerplate\Core\Globals;
+use Bga\Games\FoxOnTheTree\Boilerplate\Core\Stats;
 use Bga\Games\FoxOnTheTree\Managers\ActionTokens;
 use Bga\Games\FoxOnTheTree\Managers\Animals;
 use Bga\Games\FoxOnTheTree\Managers\AnimalTokens;
@@ -59,6 +60,7 @@ class Game extends \Bga\GameFramework\Table
             'logging' => 10,
         ]);
         Engine::boot();
+        Stats::checkExistence();
 
         /* example of notification decorator.
         // automatically complete notification args when needed
@@ -300,8 +302,7 @@ class Game extends \Bga\GameFramework\Table
         ActionTokens::setupNewGame($players, $options);
         Animals::setupNewGame($players, $options);
         AnimalTokens::setupNewGame($players, $options);
-
-
+        Stats::checkExistence();
 
 
         $this->activeNextPlayer();

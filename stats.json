@@ -1,1 +1,60 @@
-{}
+{
+  "table": {
+    "winningCardId": {
+      "id": 10,
+      "name": "Winning card",
+      "type": "int"
+    },
+    "numberOfConflicts": {
+      "id": 11,
+      "name": "Number of conflicts",
+      "type": "int"
+    }
+  },
+  "player": {
+    "bananaPeelUsed": {
+      "id": 30,
+      "name": "Used Banana Peel token",
+      "type": "int"
+    },
+    "escapeUsed": {
+      "id": 31,
+      "name": "Used Escape token",
+      "type": "int"
+    },
+    "swampUsed": {
+      "id": 32,
+      "name": "Used Swamp token",
+      "type": "int"
+    },
+    "numberOfTokensUsed": {
+      "id": 33,
+      "name": "Number of tokens used",
+      "type": "int"
+    },
+    "numberOfSwampRescues": {
+      "id": 34,
+      "name": "Number of Swamp Rescues",
+      "type": "int"
+    },
+    "numberOfAnimalsMoved": {
+      "id": 35,
+      "name": "Number of Animals Moved",
+      "type": "int"
+    }
+  },
+  "value_labels": {
+    "30": [
+      "No",
+      "Yes"
+    ],
+    "31": [
+      "No",
+      "Yes"
+    ],
+    "32": [
+      "No",
+      "Yes"
+    ]
+  }
+}

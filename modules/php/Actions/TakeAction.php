@@ -3,6 +3,7 @@
 namespace Bga\Games\FoxOnTheTree\Actions;
 
 use Bga\Games\FoxOnTheTree\Boilerplate\Core\Engine;
+use Bga\Games\FoxOnTheTree\Boilerplate\Core\Stats;
 use Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Utils;
 use Bga\Games\FoxOnTheTree\Managers\ActionTokens;
 use Bga\Games\FoxOnTheTree\Managers\Animals;
@@ -96,6 +97,8 @@ class TakeAction extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
 
   public function move($animalId, $tileId)
   {
+    $player = $this->getPlayer();
+    Stats::incNumberOfAnimalsMoved($player->getId(), 1);
     $options = $this->getAnimalsMoveOptions();
 
     if (!isset($options[$animalId])) {
@@ -109,7 +112,7 @@ class TakeAction extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
       throw new \feException("ERROR_008");
     }
 
-    $animal->moveTo($this->getPlayer(), $tileId, $tileId === $optionsForAnimal['basic'] ? BASIC : SPECIAL);
+    $animal->moveTo($player, $tileId, $tileId === $optionsForAnimal['basic'] ? BASIC : SPECIAL);
 
     // Get animal again to have fresh data
     // It might have moved because of banana
@@ -137,6 +140,7 @@ class TakeAction extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
         'playerId' => $this->ctx->getPlayerId(),
       ];
       $this->ctx->insertAsBrother(Engine::buildTree($action));
+      Stats::incNumberOfConflicts(1);
       //   AtomicActions::createConflict($tileId);
     }
     // else {
@@ -152,6 +156,8 @@ class TakeAction extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
 
   public function swampRescue($actionTokenId)
   {
+    $player = $this->getPlayer();
+    Stats::incNumberOfSwampRescues($player->getId(), 1);
     $options = $this->getSwampRescueOptions();
 
     $actionToken = Utils::array_find($options, function ($t) use ($actionTokenId) {
@@ -162,7 +168,7 @@ class TakeAction extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
       throw new \feException("ERROR_009");
     }
 
-    $actionToken->discard($this->getPlayer());
+    $actionToken->discard($player);
   }
 
   public function getAnimalsMoveOptions()

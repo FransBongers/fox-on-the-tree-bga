@@ -67,13 +67,6 @@ class Stats extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\DB_Manager
         if ($statId < 10) {
           continue;
         }
-        $faction = $player->getFaction();
-
-        // if ((in_array($statId, STATS_SIDE_SPECIFIC[BRITISH]) || in_array($statId, STATS_SIDE_SPECIFIC[FRENCH]))
-        //   && !in_array($statId, STATS_SIDE_SPECIFIC[$faction])
-        // ) {
-        //   continue;
-        // }
 
         if (!in_array($statId . ',player,' . $playerId, $existingStats)) {
           $value = $default[$stat['type']];

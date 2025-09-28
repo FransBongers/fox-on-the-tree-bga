@@ -5,6 +5,7 @@ namespace Bga\Games\FoxOnTheTree\Actions;
 use Bga\Games\FoxOnTheTree\Boilerplate\Core\Engine;
 use Bga\Games\FoxOnTheTree\Boilerplate\Core\Engine\LeafNode;
 use Bga\Games\FoxOnTheTree\Boilerplate\Core\Notifications;
+use Bga\Games\FoxOnTheTree\Boilerplate\Core\Stats;
 use Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Locations;
 use Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Utils;
 use Bga\Games\FoxOnTheTree\Managers\Animals;
@@ -37,14 +38,11 @@ class PreEndOfGame extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
 
   public function stPreEndOfGame()
   {
-    /**
-     * TODO
-     * - stats
-     */
+    Notifications::phase(clienttranslate('End of the Game'),[]);
+
     $animals = Animals::getAll();
-    $players = Players::getAll();
+    $players = Players::getAll()->toArray();
     foreach ($players as $player) {
-      $points = 0;
       $card = $player->getCard();
       Notifications::revealCard($player, $card);
       foreach ($card->getFavored() as $animalId) {
@@ -62,6 +60,15 @@ class PreEndOfGame extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
       $player->setScoreAux(ActionTokens::countInLocation(Locations::actionTokens($player->getId())));
     }
 
+    usort($players, function ($a, $b) {
+      if ($a->getScore() === $b->getScore()) {
+        return $b->getScoreAux() <=> $a->getScoreAux();
+      }
+      return $b->getScore() <=> $a->getScore();
+    });
+    $winningCard = $players[0]->getCard();
+    $lastChar = intval(substr($winningCard->getId(), -1));
+    Stats::setWinningCardId($lastChar);
 
     Game::get()->gamestate->jumpToState(ST_END_GAME);
   }

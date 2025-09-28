@@ -2,6 +2,19 @@
 require_once 'gameoptions.inc.php';
 
 /**
+ * Stats
+ */
+const STAT_WINNING_CARD = 10;
+const STAT_NUMBER_OF_CONFLICTS = 11;
+
+const STAT_PLAYER_BANANA_PEEL_USED = 30;
+const STAT_PLAYER_ESCAPE_USED = 31;
+const STAT_PLAYER_SWAMP_USED = 32;
+const STAT_PLAYER_NUMBER_OF_TOKENS_USED = 33;
+const STAT_PLAYER_NUMBER_OF_SWAMP_RESCUES = 34;
+const STAT_PLAYER_NUMBER_OF_ANIMALS_MOVED = 35;
+
+/**
  * Locations
  */
 const DECK = 'deck';

@@ -3,6 +3,7 @@
 namespace Bga\Games\FoxOnTheTree\Models;
 
 use Bga\Games\FoxOnTheTree\Boilerplate\Core\Notifications;
+use Bga\Games\FoxOnTheTree\Boilerplate\Core\Stats;
 use Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Locations;
 use Bga\Games\FoxOnTheTree\Boilerplate\Helpers\Utils;
 use Bga\Games\FoxOnTheTree\Managers\Animals;
@@ -48,17 +49,24 @@ class ActionToken extends \Bga\Games\FoxOnTheTree\Boilerplate\Helpers\DB_Model
   public function placeOnPathTile($player, $tileId)
   {
     $this->setLocation($tileId);
-    Notifications::placeActionToken($player, $this, $tileId); 
+    Notifications::placeActionToken($player, $this, $tileId);
   }
 
   public function use($player, $target)
   {
+    $playerId = $player->getId();
+    Stats::incNumberOfTokensUsed($playerId, 1);
     switch ($this->type) {
       case BANANA:
+        Stats::setBananaPeelUsed($playerId, 1);
+        $this->placeOnPathTile($player, $target);
+        break;
       case SWAMP:
+        Stats::setSwampUsed($playerId, 1);
         $this->placeOnPathTile($player, $target);
         break;
       case ESCAPE:
+        Stats::setEscapeUsed($playerId, 1);
         $animal = Animals::get($target);
         $animal->moveTo($player, $animal->getStartingTile(), RETURN_TO_STARTING_TILE);
         $this->discard($player);
