@@ -4,15 +4,15 @@
 
 .fott-action-token-container {
   position: relative;
-  width: calc(var(--tokenScale) * 75px);
-  aspect-ratio: 402 / 432;
+  width: calc(var(--tokenScale) * 83px);
+  aspect-ratio: 444 / 474;
 }
 
 .fott-action-token {
-  width: calc(var(--tokenScale) * 75px);
-  aspect-ratio: 402 / 432;
-  background-image: url('img/tokens.png');
-  background-size: 300% 100%;
+  width: calc(var(--tokenScale) * 83px);
+  aspect-ratio: 444 / 474;
+  background-image: url('img/action-tokens.png');
+  background-size: 300% 300%;
 }
 
 .fott-animal-token.card-side,
@@ -35,10 +35,7 @@
 .fott-action-token-container.selectable {
   .fott-action-token {
     cursor: pointer;
-    filter: drop-shadow(4px 0px 0px base.$selectable-color)
-      drop-shadow(-4px 0px 0px base.$selectable-color)
-      drop-shadow(0px 4px 0px base.$selectable-color)
-      drop-shadow(0px -4px 0px base.$selectable-color);
+    background-position-y: 50%;
   }
 }
 
@@ -46,10 +43,7 @@
 .fott-action-token-container.selected {
   .fott-action-token {
     cursor: pointer;
-    filter: drop-shadow(4px 0px 0px base.$selected-color)
-      drop-shadow(-4px 0px 0px base.$selected-color)
-      drop-shadow(0px 4px 0px base.$selected-color)
-      drop-shadow(0px -4px 0px base.$selected-color);
+    background-position-y: 100%;
   }
 }
 

@@ -3552,7 +3552,6 @@ var FoxOnTheTree = (function () {
     };
     FoxOnTheTree.prototype.setupDontPreloadImages = function () { };
     FoxOnTheTree.prototype.onEnteringState = function (stateName, args) {
-        var _this = this;
         var _a;
         console.log('Entering state: ' + stateName, args);
         var activePlayerIds = (_a = args.args) === null || _a === void 0 ? void 0 : _a.activePlayerIds;
@@ -3566,18 +3565,6 @@ var FoxOnTheTree = (function () {
             this.states[stateName]
                 .getInstance()
                 .setDescription(activePlayerIds || Number(args.active_player), args.args);
-        }
-        if (args.args && args.args.previousSteps) {
-            args.args.previousSteps.forEach(function (stepId) {
-                var logEntry = $('logs').querySelector(".log.notif_newUndoableStep[data-step=\"".concat(stepId, "\"]"));
-                if (logEntry) {
-                    _this.onClick(logEntry, function () { return _this.undoToStep({ stepId: stepId }); });
-                }
-                logEntry = document.querySelector(".chatwindowlogs_zone .log.notif_newUndoableStep[data-step=\"".concat(stepId, "\"]"));
-                if (logEntry) {
-                    _this.onClick(logEntry, function () { return _this.undoToStep({ stepId: stepId }); });
-                }
-            });
         }
     };
     FoxOnTheTree.prototype.onLeavingState = function (stateName) {

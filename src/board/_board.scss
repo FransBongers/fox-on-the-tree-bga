@@ -84,7 +84,7 @@
   position: absolute;
   width: 100%;
   left: 0;
-  bottom: calc(var(--tileScale) * -66px);
+  bottom: calc(var(--tileScale) * -60px);
   height: calc(var(--tokenScale) * 81px);
   // background-color: yellow;
 }
@@ -138,14 +138,14 @@ $tiles: (
 .fott-animal-container {
   position: relative;
   width: calc(var(--tokenScale) * 100px);
-  aspect-ratio: 375 / 400;
+  aspect-ratio: 407 / 432;
 }
 
 .fott-animal {
-  width: calc(var(--tokenScale) * 100px);
-  aspect-ratio: 375 / 400;
-  background-image: url('img/animals.png');
-  background-size: 400% 200%;
+  width: calc(var(--tokenScale) * 105px);
+  aspect-ratio: 407 / 432;
+  background-image: url('img/standees.png');
+  background-size: 800% 300%;
   transition: tranform 1s;
 }
 
@@ -174,18 +174,15 @@ $animals: (
 
 @for $i from 1 through 8 {
   .fott-animal[data-animal='#{map.get($animals,$i)}'] {
-    background-position-x: math.div((($i - 1) % 4 * 100%), 3);
-    background-position-y: math.div(math.floor(calc(($i - 1) / 4)) * 100%, 1);
+    background-position-x: math.div((($i - 1) % 8 * 100%), 7);
+    // background-position-y: math.div(math.floor(calc(($i - 1) / 4)) * 100%, 1);
   }
 }
 
 .fott-animal-container.selectable {
   .fott-animal {
     cursor: pointer;
-    filter: drop-shadow(4px 0px 0px base.$selectable-color)
-      drop-shadow(-4px 0px 0px base.$selectable-color)
-      drop-shadow(0px 4px 0px base.$selectable-color)
-      drop-shadow(0px -4px 0px base.$selectable-color);
+    background-position-y: 50%;
   }
 }
 
@@ -193,9 +190,6 @@ $animals: (
 .fott-animal-container.selected {
   .fott-animal {
     cursor: pointer;
-    filter: drop-shadow(4px 0px 0px base.$selected-color)
-      drop-shadow(-4px 0px 0px base.$selected-color)
-      drop-shadow(0px 4px 0px base.$selected-color)
-      drop-shadow(0px -4px 0px base.$selected-color);
+    background-position-y: 100%;
   }
 }

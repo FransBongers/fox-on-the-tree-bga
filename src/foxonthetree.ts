@@ -202,23 +202,23 @@ class FoxOnTheTree implements Game {
     // }
 
     // Undo last steps
-    if (args.args && args.args.previousSteps) {
-      args.args.previousSteps.forEach((stepId: number) => {
-        let logEntry = $('logs').querySelector(
-          `.log.notif_newUndoableStep[data-step="${stepId}"]`
-        );
-        if (logEntry) {
-          this.onClick(logEntry, () => this.undoToStep({ stepId }));
-        }
+    // if (args.args && args.args.previousSteps) {
+    //   args.args.previousSteps.forEach((stepId: number) => {
+    //     let logEntry = $('logs').querySelector(
+    //       `.log.notif_newUndoableStep[data-step="${stepId}"]`
+    //     );
+    //     if (logEntry) {
+    //       this.onClick(logEntry, () => this.undoToStep({ stepId }));
+    //     }
 
-        logEntry = document.querySelector(
-          `.chatwindowlogs_zone .log.notif_newUndoableStep[data-step="${stepId}"]`
-        );
-        if (logEntry) {
-          this.onClick(logEntry, () => this.undoToStep({ stepId }));
-        }
-      });
-    }
+    //     logEntry = document.querySelector(
+    //       `.chatwindowlogs_zone .log.notif_newUndoableStep[data-step="${stepId}"]`
+    //     );
+    //     if (logEntry) {
+    //       this.onClick(logEntry, () => this.undoToStep({ stepId }));
+    //     }
+    //   });
+    // }
   }
 
   // onLeavingState: this method is called each time we are leaving a game state.
