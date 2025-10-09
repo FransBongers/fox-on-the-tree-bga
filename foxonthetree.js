@@ -3672,8 +3672,6 @@ var FoxOnTheTree = (function () {
         var POINTS_TRACKER_WIDTH = 1000;
         var pointsTrackerScale = Math.min(LEFT_SIZE / POINTS_TRACKER_WIDTH, 0.8);
         var pointsTrackerElt = document.getElementById('fott-points-tracker');
-        console.log('pointsTrackerElt:', pointsTrackerElt);
-        console.log('pointsTrackerScale:', pointsTrackerScale);
         if (pointsTrackerElt) {
             pointsTrackerElt.style.setProperty('--leftColumnScale', "".concat(pointsTrackerScale));
         }

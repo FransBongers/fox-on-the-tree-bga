@@ -493,8 +493,7 @@ class FoxOnTheTree implements Game {
     const POINTS_TRACKER_WIDTH = 1000;
     const pointsTrackerScale = Math.min(LEFT_SIZE / POINTS_TRACKER_WIDTH, 0.8);
     const pointsTrackerElt = document.getElementById('fott-points-tracker');
-    console.log('pointsTrackerElt:', pointsTrackerElt);
-    console.log('pointsTrackerScale:', pointsTrackerScale);
+
     if (pointsTrackerElt) {
       pointsTrackerElt.style.setProperty('--leftColumnScale', `${pointsTrackerScale}`);
     }

@@ -141,17 +141,7 @@ class TakeAction extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
       ];
       $this->ctx->insertAsBrother(Engine::buildTree($action));
       Stats::incNumberOfConflicts(1);
-      //   AtomicActions::createConflict($tileId);
     }
-    // else {
-    //   $action = [
-    //     'action' => CHECK_REACH_FINAL_TILE,
-    //     'animalId' => $animalId,
-    //     'tileId' => $tileId,
-    //     'playerId' => $this->ctx->getPlayerId(),
-    //   ];
-    //   $this->ctx->insertAsBrother(Engine::buildTree($action));
-    // }
   }
 
   public function swampRescue($actionTokenId)

@@ -63,7 +63,7 @@ class ResolveConflict extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
     // Times -1 to get direction the farm animals are coming from
     $farmAnimal = $farmAnimals[0];
     $previousTile = $farmAnimal->getTileWithOffset($farmAnimal->getDirection() * -1);
-    $previousTileHasFarmAnimal = Utils::array_some(Animals::getInLocation($previousTile)->toArray(), fn($a) => $a->isFarmAnimal());
+    $previousTileHasFarmAnimal = $previousTile !== null && Utils::array_some(Animals::getInLocation($previousTile)->toArray(), fn($a) => $a->isFarmAnimal());
 
     $winningAnimals = [];
     $eliminatedAnimals = [];
