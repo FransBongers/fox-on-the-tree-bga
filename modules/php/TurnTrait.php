@@ -76,18 +76,28 @@ trait TurnTrait
     // End of pahse when all animals are off the tiles
 
     $animals = Animals::getAll()->toArray();
-    $stillAnimalsOnTiles = Utils::array_some($animals, function (Animal $animal) {
+    $animalsOnTiles = Utils::filter($animals, function (Animal $animal) {
       return $animal->isOnTile();
     });
+    $numberOfAnimalsOnTiles = count($animalsOnTiles);
 
-    if ($stillAnimalsOnTiles) {
+    $phase = Globals::getPhase();
+    Notifications::log('phase', $phase);
+    if ($numberOfAnimalsOnTiles === 1 && $phase === SECOND_PHASE) {
+      Notifications::log('score remaining animal', $phase);
+      // Score the last remaining animal
+      $animal = $animalsOnTiles[0];
+      $hightestUnoccupied = $animal->getHighestUnoccupied($animals, $phase);
+
+      $animal->scorePoints($phase, $hightestUnoccupied);
+      $numberOfAnimalsOnTiles--;
+    } 
+    if ($numberOfAnimalsOnTiles > 0) {
       // If there are still animals on tiles, continue with the next player's turn
       $this->stNextPlayer();
       return;
     }
 
-
-    $phase = Globals::getPhase();
 
     if ($phase === FIRST_PHASE) {
       // Move to second phase
