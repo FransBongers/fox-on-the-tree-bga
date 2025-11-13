@@ -3882,7 +3882,7 @@ var ANIMAL_POSITIONS = [
 var getAnimalPosition = function (index, totalOnTile) {
     return ANIMAL_POSITIONS[totalOnTile][index];
 };
-var ZOOM_LEVELS = [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3];
+var ZOOM_LEVELS = [1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.25, 3.5];
 var LOCAL_STORAGE_ZOOM_KEY = 'FoxOnTheTree-zoom';
 var Board = (function () {
     function Board(game) {

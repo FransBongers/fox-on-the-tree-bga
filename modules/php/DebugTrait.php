@@ -30,6 +30,13 @@ trait DebugTrait
     // AtomicActions::get(PRE_END_OF_GAME)->stPreEndOfGame();
   }
 
+
+  function debug_undoToStep(int $stepId)
+  {
+    
+    $this->actUndoToStep($stepId, true);
+  }
+
   function debug_engineDisplay()
   {
     Notifications::log('engine', Globals::getEngine());

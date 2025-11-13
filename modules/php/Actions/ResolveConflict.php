@@ -89,7 +89,7 @@ class ResolveConflict extends \Bga\Games\FoxOnTheTree\Models\AtomicAction
     // Check if animals can escape
     $playersThatCanUseEscapeToken = AtomicActions::get(ESCAPE)->getPlayersThatCanUseEscapeToken($currentTurnPlayerId);
 
-    if (count($playersThatCanUseEscapeToken) > 0) {
+    if (count($playersThatCanUseEscapeToken) > 0 && count(AtomicActions::get(ESCAPE)->getOptions($eliminatedAnimals)) > 0) {
       $action = [
         'action' => ESCAPE,
         'animalIds' => Utils::returnIds($eliminatedAnimals),
